@@ -1,0 +1,16 @@
+apply plugin: 'java'
+apply plugin: 'groovy'
+
+sourceCompatibility = 1.8
+version = '1.0'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile "org.codehaus.groovy:groovy-all:2.3.6"
+    compile "com.rabbitmq:amqp-client:3.3.4"
+
+    testCompile "org.spockframework:spock-core:0.7-groovy-2.0"
+}
