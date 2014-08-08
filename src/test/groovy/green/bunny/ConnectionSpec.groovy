@@ -1,5 +1,7 @@
 package green.bunny
 
+import com.rabbitmq.client.AuthenticationFailureException
+
 class ConnectionSpec extends IntegrationSpec {
   @Override
   def Connection connect() {
@@ -26,6 +28,19 @@ class ConnectionSpec extends IntegrationSpec {
     then: "connection succeeds"
     conn.isOpen
     !conn.isClosed
+  }
+
+  def "connecting to localhost with invalid credentials"() {
+    given: "invalid credentials to a localhost node"
+    def u = UUID.randomUUID().toString()
+    def p = UUID.randomUUID().toString()
+
+    when: "client connects"
+    conn = GreenBunny.connect(["username": u, "password": p, "vhost": "bunny_testbed"])
+
+    then: "connection fails"
+    thrown(AuthenticationFailureException)
+    conn == null
   }
 
   def "closing a connection"() {
