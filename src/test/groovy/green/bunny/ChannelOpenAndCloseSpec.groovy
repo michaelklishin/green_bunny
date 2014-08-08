@@ -18,4 +18,13 @@ class ChannelOpenAndCloseSpec extends IntegrationSpec {
     ch.isOpen
     ch.number == n
   }
+
+  def "closing a channel"() {
+    when: "client opens and then closes a channel"
+    def ch = conn.createChannel()
+    ch.close()
+
+    then: "operation succeeds"
+    ch.isClosed
+  }
 }
