@@ -10,6 +10,12 @@ class ConnectionSpec extends IntegrationSpec {
     null
   }
 
+  @Override
+  def Channel openChannel() {
+    // see above
+    null
+  }
+
   def "connecting with all defaults"() {
     given: "all default connection parameters"
     when: "client connects"

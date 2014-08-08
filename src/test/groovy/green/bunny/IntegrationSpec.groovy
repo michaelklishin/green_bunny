@@ -6,13 +6,19 @@ import java.security.SecureRandom
 
 class IntegrationSpec extends Specification {
   def Connection conn
+  def Channel ch
 
   def setup() {
     conn = connect()
+    ch   = openChannel()
   }
 
   protected Connection connect() {
     GreenBunny.connect()
+  }
+
+  protected Channel openChannel() {
+    conn.createChannel()
   }
 
   def cleanup() {

@@ -4,7 +4,7 @@ import com.rabbitmq.client.ConnectionFactory
 
 class Connection {
   def com.rabbitmq.client.Connection delegate
-  def com.rabbitmq.client.ConnectionFactory cf
+  def ConnectionFactory cf
 
   Connection(ConnectionFactory cf, com.rabbitmq.client.Connection delegate) {
     this.cf       = cf
