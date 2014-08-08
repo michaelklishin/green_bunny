@@ -15,7 +15,7 @@ class ConnectionSpec extends Specification {
   def "connecting with all defaults"() {
     given: "all default connection parameters"
     when: "client connects"
-    conn = Bunny.connect()
+    conn = GreenBunny.connect()
 
     then: "connection succeeds"
     conn.isOpen
@@ -27,7 +27,7 @@ class ConnectionSpec extends Specification {
     def p = "green_bunny_password"
 
     when: "client connects"
-    conn = Bunny.connect(["username": u, "password": p, "vhost": "bunny_testbed"])
+    conn = GreenBunny.connect(["username": u, "password": p, "vhost": "bunny_testbed"])
 
     then: "connection succeeds"
     conn.isOpen
@@ -36,7 +36,7 @@ class ConnectionSpec extends Specification {
 
   def "closing a connection"() {
     given: "an open connection"
-    def conn = Bunny.connect()
+    def conn = GreenBunny.connect()
 
     when: "client closes connection"
     conn.close()
@@ -44,5 +44,16 @@ class ConnectionSpec extends Specification {
     then: "the connection is no longer open"
     !conn.isOpen
     conn.isClosed
+  }
+
+  def "connecting with an overridden heartbeat interval"() {
+    given: "heartbeat timeout of 10 seconds"
+    def hb = 10
+
+    when: "client connects"
+    conn = GreenBunny.connect(["requested_heartbeat": hb])
+
+    then: "connection succeeds"
+    conn.isOpen
   }
 }

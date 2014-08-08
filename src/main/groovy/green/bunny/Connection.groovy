@@ -1,9 +1,13 @@
 package green.bunny
 
+import com.rabbitmq.client.ConnectionFactory
+
 class Connection {
   def com.rabbitmq.client.Connection delegate
+  def com.rabbitmq.client.ConnectionFactory cf
 
-  Connection(com.rabbitmq.client.Connection delegate) {
+  Connection(ConnectionFactory cf, com.rabbitmq.client.Connection delegate) {
+    this.cf       = cf
     this.delegate = delegate
   }
 
