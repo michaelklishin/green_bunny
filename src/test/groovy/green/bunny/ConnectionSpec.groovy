@@ -2,8 +2,6 @@ package green.bunny
 
 import com.rabbitmq.client.AuthenticationFailureException
 
-import java.security.SecureRandom
-
 class ConnectionSpec extends IntegrationSpec {
   @Override
   def Connection connect() {
