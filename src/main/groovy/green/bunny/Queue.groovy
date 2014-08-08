@@ -46,7 +46,7 @@ class Queue {
     this.name
   }
 
-  def boolean isServerNamed() {
+  def boolean getIsServerNamed() {
     this.serverNamed
   }
 
@@ -68,6 +68,14 @@ class Queue {
 
   def Map<String, Object> getArguments() {
     this.arguments
+  }
+
+  //
+  // Deletion
+  //
+
+  def delete() {
+    this.channel.queueDelete(this.name)
   }
 
   //

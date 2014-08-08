@@ -1,6 +1,7 @@
 package green.bunny
 
 import com.rabbitmq.client.AMQP.Queue.DeclareOk as DeclareOk
+import com.rabbitmq.client.AMQP.Queue.DeleteOk  as DeleteOk
 
 class Channel {
   def com.rabbitmq.client.Channel delegate
@@ -44,7 +45,10 @@ class Channel {
   //
 
   def Queue queue() {
-
+    def q = new Queue(this)
+    q.performDeclare()
+    // TODO: caching, book keeping for recovery
+    q
   }
 
   def Queue queue(Map opts, String name) {
@@ -73,5 +77,9 @@ class Channel {
 
   def DeclareOk queueDeclarePassive(String name) {
     delegate.queueDeclarePassive(name)
+  }
+
+  def DeleteOk queueDelete(String name) {
+    delegate.queueDelete(name)
   }
 }
