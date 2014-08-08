@@ -1,6 +1,11 @@
 package green.bunny
 
 class ConnectionSpec extends IntegrationSpec {
+  @Override
+  def Connection connect() {
+    // no-op in this spec
+  }
+
   def "connecting with all defaults"() {
     given: "all default connection parameters"
     when: "client connects"

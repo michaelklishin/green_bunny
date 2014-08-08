@@ -14,9 +14,18 @@ class Connection {
   def createChannel() {
     def ch = delegate.createChannel()
     if(ch == null) {
-      return null
+      null
     } else {
-      return new Channel(ch)
+      new Channel(ch)
+    }
+  }
+
+  def createChannel(int n) {
+    def ch = delegate.createChannel(n)
+    if(ch == null) {
+      null
+    } else {
+      new Channel(ch)
     }
   }
 

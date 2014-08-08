@@ -7,5 +7,25 @@ class Channel {
     this.delegate = delegate
   }
 
+  def boolean isOpen() {
+    delegate.isOpen()
+  }
+  def boolean getIsOpen() {
+    isOpen()
+  }
 
+  def close() {
+    delegate.close()
+  }
+
+  def boolean isClosed() {
+    !isOpen()
+  }
+  def boolean getIsClosed() {
+    isClosed()
+  }
+
+  def int getNumber() {
+    delegate.channelNumber
+  }
 }
