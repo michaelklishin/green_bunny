@@ -2,6 +2,8 @@ package green.bunny
 
 import com.rabbitmq.client.AuthenticationFailureException
 
+import java.security.SecureRandom
+
 class ConnectionSpec extends IntegrationSpec {
   @Override
   def Connection connect() {
@@ -69,15 +71,25 @@ class ConnectionSpec extends IntegrationSpec {
     conn.requestedHeartbeat == n
   }
 
-  def "connecting with an overridden connection timeout"() {
-    given: "connection timeout of 2 seconds"
-    def n = 2
+  def "connecting with the wrong hostname"() {
+    given: "a hostname that does not resolve"
+    def s = UUID.randomUUID().toString()
 
     when: "client connects"
-    conn = GreenBunny.connect(["connection_timeout": n])
+    conn = GreenBunny.connect(["hostname": s])
 
-    then: "connection succeeds"
-    conn.isOpen
-    conn.connectionTimeout == n
+    then: "connection fails"
+    thrown(IOException)
+  }
+
+  def "connecting with the wrong port"() {
+    given: "a port that is not bound to"
+    int n = portInRange(10000, 60000)
+
+    when: "client connects"
+    conn = GreenBunny.connect(["port": n])
+
+    then: "connection fails"
+    thrown(IOException)
   }
 }

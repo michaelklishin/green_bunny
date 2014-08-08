@@ -2,6 +2,8 @@ package green.bunny
 
 import spock.lang.Specification
 
+import java.security.SecureRandom
+
 class IntegrationSpec extends Specification {
   def Connection conn
 
@@ -18,5 +20,12 @@ class IntegrationSpec extends Specification {
       conn.close()
     }
     conn = null
+  }
+
+  protected int portInRange(int min, int max) {
+    // port range
+    def sr = new SecureRandom()
+    def n = sr.nextInt(max - min) + min
+    n
   }
 }

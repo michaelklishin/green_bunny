@@ -20,7 +20,7 @@ class GreenBunny {
     def ConnectionFactory cf = new ConnectionFactory()
 
     cf.host        = map.get("hostname") ?: (map.get("host") ?: ConnectionFactory.DEFAULT_HOST)
-    cf.port        = (map.get("port")    ?: ConnectionFactory.DEFAULT_AMQP_PORT) as Integer
+    cf.port        = (map.get("port")    ?: ConnectionFactory.DEFAULT_AMQP_PORT) as int
     cf.username    = map.get("username") ?: ConnectionFactory.DEFAULT_USER
     cf.password    = map.get("password") ?: ConnectionFactory.DEFAULT_PASS
     cf.virtualHost = map.get("vhost")    ?: ConnectionFactory.DEFAULT_VHOST
