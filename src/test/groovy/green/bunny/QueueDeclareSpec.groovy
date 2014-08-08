@@ -7,8 +7,7 @@ class QueueDeclareSpec extends IntegrationSpec {
 
     then: "the queue is declared and retains its attributes"
     q.channel == ch
-    q.name =~ /^amq\./
-    q.isServerNamed
+    ensureServerNamed(q)
     !q.isAutoDelete
     !q.isDurable
     !q.isExclusive
@@ -23,9 +22,7 @@ class QueueDeclareSpec extends IntegrationSpec {
     def q = ch.queue("", exclusive: true)
 
     then: "the queue is declared and retains its attributes"
-    q.channel == ch
-    q.name =~ /^amq\./
-    q.isServerNamed
+    ensureServerNamed(q)
     !q.isAutoDelete
     !q.isDurable
     q.isExclusive
@@ -40,9 +37,7 @@ class QueueDeclareSpec extends IntegrationSpec {
     def q = ch.queue("", autoDelete: true, durable: false, exclusive: false)
 
     then: "the queue is declared and retains its attributes"
-    q.channel == ch
-    q.name =~ /^amq\./
-    q.isServerNamed
+    ensureServerNamed(q)
     q.isAutoDelete
     !q.isDurable
     !q.isExclusive
@@ -50,5 +45,14 @@ class QueueDeclareSpec extends IntegrationSpec {
 
     cleanup:
     q.delete()
+  }
+
+  //
+  // Matchers
+  //
+
+  void ensureServerNamed(Queue q) {
+    assert q.name =~ /^amq\./
+    assert q.isServerNamed
   }
 }
