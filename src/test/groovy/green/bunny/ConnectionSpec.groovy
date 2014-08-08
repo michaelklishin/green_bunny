@@ -1,17 +1,6 @@
 package green.bunny
 
-import spock.lang.Specification
-
-class ConnectionSpec extends Specification {
-  def Connection conn
-
-  def cleanup() {
-    if(conn != null && conn.isOpen) {
-      conn.close()
-    }
-    conn = null
-  }
-
+class ConnectionSpec extends IntegrationSpec {
   def "connecting with all defaults"() {
     given: "all default connection parameters"
     when: "client connects"
