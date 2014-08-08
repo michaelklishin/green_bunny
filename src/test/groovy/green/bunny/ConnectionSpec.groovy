@@ -5,7 +5,9 @@ import com.rabbitmq.client.AuthenticationFailureException
 class ConnectionSpec extends IntegrationSpec {
   @Override
   def Connection connect() {
-    // no-op in this spec
+    // no-op in this spec, return null to silence
+    // warnings from groovyc
+    null
   }
 
   def "connecting with all defaults"() {
