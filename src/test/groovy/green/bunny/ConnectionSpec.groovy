@@ -56,4 +56,15 @@ class ConnectionSpec extends Specification {
     then: "connection succeeds"
     conn.isOpen
   }
+
+  def "connecting with an overridden connection timeout"() {
+    given: "connection timeout of 2 seconds"
+    def n = 2
+
+    when: "client connects"
+    conn = GreenBunny.connect(["connection_timeout": n])
+
+    then: "connection succeeds"
+    conn.isOpen
+  }
 }

@@ -24,6 +24,7 @@ class GreenBunny {
     cf.virtualHost = map.get("vhost")    ?: ConnectionFactory.DEFAULT_VHOST
 
     cf.requestedHeartbeat = (map.get("requested_heartbeat") ?: ConnectionFactory.DEFAULT_HEARTBEAT) as Integer
+    cf.connectionTimeout  = (map.get("connection_timeout")  ?: ConnectionFactory.DEFAULT_CONNECTION_TIMEOUT) as Integer
 
     cf
   }
