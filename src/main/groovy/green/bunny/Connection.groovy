@@ -20,21 +20,29 @@ class Connection {
     }
   }
 
-  def Boolean isOpen() {
-    return delegate.isOpen()
+  def boolean isOpen() {
+    delegate.isOpen()
   }
-  def Boolean getIsOpen() {
-    return isOpen()
+  def boolean getIsOpen() {
+    isOpen()
   }
 
   def close() {
     delegate.close()
   }
 
-  def Boolean isClosed() {
-    return !isOpen()
+  def boolean isClosed() {
+    !isOpen()
   }
-  def Boolean getIsClosed() {
-    return isClosed()
+  def boolean getIsClosed() {
+    isClosed()
+  }
+
+  def int getRequestedHeartbeat() {
+    cf.requestedHeartbeat
+  }
+
+  def int getConnectionTimeout() {
+    cf.connectionTimeout
   }
 }

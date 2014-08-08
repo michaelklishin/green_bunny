@@ -48,13 +48,14 @@ class ConnectionSpec extends Specification {
 
   def "connecting with an overridden heartbeat interval"() {
     given: "heartbeat timeout of 10 seconds"
-    def hb = 10
+    def n = 10
 
     when: "client connects"
-    conn = GreenBunny.connect(["requested_heartbeat": hb])
+    conn = GreenBunny.connect(["requested_heartbeat": n])
 
     then: "connection succeeds"
     conn.isOpen
+    conn.requestedHeartbeat == n
   }
 
   def "connecting with an overridden connection timeout"() {
@@ -66,5 +67,6 @@ class ConnectionSpec extends Specification {
 
     then: "connection succeeds"
     conn.isOpen
+    conn.connectionTimeout == n
   }
 }
