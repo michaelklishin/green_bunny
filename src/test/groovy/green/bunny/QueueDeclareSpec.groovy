@@ -92,31 +92,4 @@ class QueueDeclareSpec extends IntegrationSpec {
     cleanup:
     ch.queueDelete(q)
   }
-
-  //
-  // Matchers
-  //
-
-  void ensureServerNamed(Queue q) {
-    assert q.name =~ /^amq\./
-    assert q.isServerNamed
-  }
-
-  void ensureServerNamed(String q) {
-    assert q =~ /^amq\./
-  }
-
-  void ensureClientNamed(Queue q) {
-    assert !(q.name =~ /^amq\./)
-    assert !q.isServerNamed
-  }
-
-  void ensureDeclared(Channel ch, Queue q) {
-    assert q.channel == ch
-    assert ch.queueDeclarePassive(q.name)
-  }
-
-    void ensureDeclared(String q) {
-    assert ch.queueDeclarePassive(q)
-  }
 }
