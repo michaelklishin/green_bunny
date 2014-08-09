@@ -21,6 +21,21 @@ class QueueDeclareSpec extends IntegrationSpec {
     q.delete()
   }
 
+  def "declaring a client-named queue with all defaults"() {
+    when: "the queue is declared"
+    def q = ch.queue(UUID.randomUUID().toString())
+
+    then: "the queue is declared and retains its attributes"
+    ensureDeclared(ch, q)
+    ensureClientNamed(q)
+    !q.isAutoDelete
+    !q.isDurable
+    !q.isExclusive
+
+    cleanup:
+    q.delete()
+  }
+
   def "declaring a server-named queue"(boolean durable, boolean exclusive, boolean autoDelete) {
     when: "the queue is declared"
     def q = ch.queue("", exclusive: exclusive, durable: durable, autoDelete: autoDelete)

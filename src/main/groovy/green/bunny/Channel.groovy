@@ -51,6 +51,10 @@ class Channel {
     q
   }
 
+  def Queue queue(String name) {
+    queue([:], name)
+  }
+
   def Queue queue(Map opts, String name) {
     def q = new Queue(this, name,
         (opts.get("durable")     ?: false) as boolean,
