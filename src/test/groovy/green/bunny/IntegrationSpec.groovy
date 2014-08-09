@@ -75,7 +75,7 @@ abstract class IntegrationSpec extends Specification {
     try {
       tmpCh.queueDeclarePassive(q)
       assert false
-    } catch (IOException _) {
+    } catch (IOException ignored) {
       // expected
     }
   }
