@@ -23,7 +23,7 @@ class QueueDeclareSpec extends IntegrationSpec {
 
   def "declaring a client-named queue with all defaults"() {
     when: "the queue is declared"
-    def q = ch.queue(UUID.randomUUID().toString())
+    def q = ch.queue(s)
 
     then: "the queue is declared and retains its attributes"
     ensureDeclared(ch, q)
@@ -34,6 +34,9 @@ class QueueDeclareSpec extends IntegrationSpec {
 
     cleanup:
     q.delete()
+
+    where:
+    s << (0..100).collect { UUID.randomUUID().toString() }
   }
 
   def "declaring a server-named queue"(boolean durable, boolean exclusive, boolean autoDelete) {
@@ -62,9 +65,8 @@ class QueueDeclareSpec extends IntegrationSpec {
     true    | false     | true
   }
 
-  def "declaring a client-named queue"(boolean durable, boolean exclusive, boolean autoDelete) {
+  def "declaring a client-named queue"(boolean durable, boolean exclusive, boolean autoDelete, String s) {
     given: "a client-specified name"
-    def s = UUID.randomUUID().toString()
 
     when: "the queue is declared"
     def q = ch.queue(s, exclusive: exclusive, durable: durable, autoDelete: autoDelete)
@@ -80,15 +82,15 @@ class QueueDeclareSpec extends IntegrationSpec {
     q.delete()
 
     where:
-    durable | exclusive | autoDelete
-    false   | false     | false
-    true    | false     | false
-    true    | true      | false
-    true    | true      | true
-    false   | false     | true
-    false   | true      | true
-    false   | true      | false
-    true    | false     | true
+    durable | exclusive | autoDelete | s
+    false   | false     | false      | UUID.randomUUID().toString()
+    true    | false     | false      | UUID.randomUUID().toString()
+    true    | true      | false      | UUID.randomUUID().toString()
+    true    | true      | true       | UUID.randomUUID().toString()
+    false   | false     | true       | UUID.randomUUID().toString()
+    false   | true      | true       | UUID.randomUUID().toString()
+    false   | true      | false      | UUID.randomUUID().toString()
+    true    | false     | true       | UUID.randomUUID().toString()
   }
 
 
