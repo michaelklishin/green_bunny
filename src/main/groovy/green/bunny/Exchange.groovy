@@ -46,7 +46,7 @@ class Exchange {
     this.name.isEmpty() || this.name.startsWith("amq.")
   }
 
-  def boolean getType() {
+  def String getType() {
     this.type
   }
 
@@ -77,6 +77,16 @@ class Exchange {
   //
   // Implementation
   //
+
+  @Override
+  def String toString() {
+    "<" +
+        "type = " + type +
+        ", name = " + name +
+        ", durable = " + isDurable.toString() +
+        ", autoDelete = " + isAutoDelete.toString() +
+    ">"
+  }
 
   def maybePerformDeclare() {
     if(!isPredefined) {
