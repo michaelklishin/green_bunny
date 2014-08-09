@@ -62,6 +62,11 @@ abstract class IntegrationSpec extends Specification {
     assert ch.queueDeclarePassive(q.name)
   }
 
+  void ensureDeclared(Channel ch, Exchange e) {
+    assert e.channel == ch
+    assert ch.exchangeDeclarePassive(e.name)
+  }
+
   void ensureDeclared(String q) {
     assert ch.queueDeclarePassive(q)
   }
