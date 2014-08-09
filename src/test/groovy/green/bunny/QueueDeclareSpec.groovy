@@ -1,7 +1,5 @@
 package green.bunny
 
-import java.security.SecureRandom
-
 class QueueDeclareSpec extends IntegrationSpec {
   def "declaring a server-named queue with all defaults"() {
     when: "the queue is declared"
@@ -72,7 +70,6 @@ class QueueDeclareSpec extends IntegrationSpec {
     false   | true      | false
     true    | false     | true
   }
-
 
   //
   // Matchers

@@ -10,7 +10,7 @@ class IntegrationSpec extends Specification {
 
   def setup() {
     conn = connect()
-    ch   = openChannel()
+    ch = openChannel()
   }
 
   protected Connection connect() {
