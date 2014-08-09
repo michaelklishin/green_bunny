@@ -4,7 +4,7 @@ import spock.lang.Specification
 
 import java.security.SecureRandom
 
-class IntegrationSpec extends Specification {
+abstract class IntegrationSpec extends Specification {
   def Connection conn
   def Channel ch
 
