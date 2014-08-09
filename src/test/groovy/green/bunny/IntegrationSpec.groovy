@@ -79,4 +79,8 @@ abstract class IntegrationSpec extends Specification {
       // expected
     }
   }
+
+  String randomQueueName() {
+    UUID.randomUUID().toString()
+  }
 }

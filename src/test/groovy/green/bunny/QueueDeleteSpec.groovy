@@ -8,7 +8,7 @@ class QueueDeleteSpec extends IntegrationSpec {
 
   def "deleting a queue"() {
     given: "queue"
-    def q = ch.queue("greenbunny-q1", durable: false)
+    def q = ch.queue(randomQueueName(), durable: false)
 
     when: "queue is deleted"
     q.delete()
@@ -24,7 +24,7 @@ class QueueDeleteSpec extends IntegrationSpec {
 
   def "deleting a queue using queueDelete"() {
     given: "queue"
-    def q = ch.queue("greenbunny-q1", durable: false)
+    def q = ch.queue(randomQueueName(), durable: false)
 
     when: "queue is deleted"
     ch.queueDelete(q.name)
