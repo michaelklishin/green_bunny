@@ -16,35 +16,32 @@ class QueueDeclareSpec extends IntegrationSpec {
     q.delete()
   }
 
-  def "declaring a non-durable, exclusive, non-auto-delete server-named queue"() {
+  def "declaring a server-named queue"(boolean durable, boolean exclusive, boolean autoDelete) {
     when: "the queue is declared"
-    def q = ch.queue("", exclusive: true)
+    def q = ch.queue("", exclusive: exclusive, durable: durable, autoDelete: autoDelete)
 
     then: "the queue is declared and retains its attributes"
     ensureDeclared(ch, q)
     ensureServerNamed(q)
-    !q.isAutoDelete
-    !q.isDurable
-    q.isExclusive
+    q.isAutoDelete == autoDelete
+    q.isDurable == durable
+    q.isExclusive == exclusive
 
     cleanup:
     q.delete()
+
+    where:
+    durable | exclusive | autoDelete
+    false   | false     | false
+    true    | false     | false
+    true    | true      | false
+    true    | true      | true
+    false   | false     | true
+    false   | true      | true
+    false   | true      | false
+    true    | false     | true
   }
 
-  def "declaring a non-durable, non-exclusive, auto-delete server-named queue"() {
-    when: "the queue is declared"
-    def q = ch.queue("", autoDelete: true, durable: false, exclusive: false)
-
-    then: "the queue is declared and retains its attributes"
-    ensureDeclared(ch, q)
-    ensureServerNamed(q)
-    q.isAutoDelete
-    !q.isDurable
-    !q.isExclusive
-
-    cleanup:
-    q.delete()
-  }
 
   //
   // Matchers
