@@ -28,6 +28,9 @@ class ExchangeDeclare extends IntegrationSpec {
     !e.isDurable
     !e.isAutoDelete
 
+    cleanup:
+    e.delete()
+
     where:
     s << (0..100).collect { UUID.randomUUID().toString() }
   }
