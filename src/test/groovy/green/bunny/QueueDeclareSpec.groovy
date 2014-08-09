@@ -1,6 +1,11 @@
 package green.bunny
 
 class QueueDeclareSpec extends IntegrationSpec {
+
+  //
+  // High-level API
+  //
+
   def "declaring a server-named queue with all defaults"() {
     when: "the queue is declared"
     def q = ch.queue()
@@ -71,6 +76,23 @@ class QueueDeclareSpec extends IntegrationSpec {
     true    | false     | true
   }
 
+
+  //
+  // Lower-level API
+  //
+
+  def "declaring a server-named queue with all defaults using lower-level API"() {
+    when: "the queue is declared"
+    def q = ch.queueDeclare()
+
+    then: "the queue is declared and retains its attributes"
+    ensureDeclared(q)
+    ensureServerNamed(q)
+
+    cleanup:
+    ch.queueDelete(q)
+  }
+
   //
   // Matchers
   //
@@ -78,6 +100,10 @@ class QueueDeclareSpec extends IntegrationSpec {
   void ensureServerNamed(Queue q) {
     assert q.name =~ /^amq\./
     assert q.isServerNamed
+  }
+
+  void ensureServerNamed(String q) {
+    assert q =~ /^amq\./
   }
 
   void ensureClientNamed(Queue q) {
@@ -88,5 +114,9 @@ class QueueDeclareSpec extends IntegrationSpec {
   void ensureDeclared(Channel ch, Queue q) {
     assert q.channel == ch
     assert ch.queueDeclarePassive(q.name)
+  }
+
+    void ensureDeclared(String q) {
+    assert ch.queueDeclarePassive(q)
   }
 }
