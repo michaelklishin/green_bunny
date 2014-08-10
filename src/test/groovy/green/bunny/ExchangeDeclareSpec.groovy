@@ -73,4 +73,25 @@ class ExchangeDeclareSpec extends IntegrationSpec {
     s << (0..100).collect { UUID.randomUUID().toString() }
   }
 
+  def "declaring a topic exchange with overridden attributes"(String s, boolean durable, boolean autoDelete) {
+    when: "exchange is declared"
+    def e = ch.topic(s, durable: durable, autoDelete: autoDelete)
+
+    then: "operation succeeds"
+    ensureDeclared(ch, e)
+    !e.isPredefined
+    e.isDurable == durable
+    e.isAutoDelete == autoDelete
+
+    cleanup:
+    e.delete()
+
+    where:
+    s                            | durable | autoDelete
+    UUID.randomUUID().toString() |   true  |    true
+    UUID.randomUUID().toString() |   false |    false
+    UUID.randomUUID().toString() |   false |    true
+    UUID.randomUUID().toString() |   true  |    false
+  }
+
 }
