@@ -23,6 +23,7 @@ class ExchangeDeclareSpec extends IntegrationSpec {
 
     then: "operation succeeds"
     ensureDeclared(ch, e)
+    e.type == "fanout"
     !e.isPredefined
     !e.isDurable
     !e.isAutoDelete
@@ -40,6 +41,7 @@ class ExchangeDeclareSpec extends IntegrationSpec {
 
     then: "operation succeeds"
     ensureDeclared(ch, e)
+    e.type == "fanout"
     !e.isPredefined
     e.isDurable == durable
     e.isAutoDelete == autoDelete
@@ -61,6 +63,7 @@ class ExchangeDeclareSpec extends IntegrationSpec {
 
     then: "operation succeeds"
     ensureDeclared(ch, e)
+    e.type == "topic"
     !e.isPredefined
     !e.isDurable
     !e.isAutoDelete
@@ -78,6 +81,7 @@ class ExchangeDeclareSpec extends IntegrationSpec {
 
     then: "operation succeeds"
     ensureDeclared(ch, e)
+    e.type == "topic"
     !e.isPredefined
     e.isDurable == durable
     e.isAutoDelete == autoDelete
@@ -99,6 +103,7 @@ class ExchangeDeclareSpec extends IntegrationSpec {
 
     then: "operation succeeds"
     ensureDeclared(ch, e)
+    e.type == "direct"
     !e.isPredefined
     !e.isDurable
     !e.isAutoDelete
@@ -116,6 +121,7 @@ class ExchangeDeclareSpec extends IntegrationSpec {
 
     then: "operation succeeds"
     ensureDeclared(ch, e)
+    e.type == "direct"
     !e.isPredefined
     e.isDurable == durable
     e.isAutoDelete == autoDelete
