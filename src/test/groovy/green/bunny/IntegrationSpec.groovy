@@ -74,11 +74,11 @@ abstract class IntegrationSpec extends Specification {
     assert ch.queueDeclarePassive(q)
   }
 
-  void ensureDeleted(Queue q) {
-    ensureDeleted(q.name)
+  void ensureQueueDeleted(Queue q) {
+    ensureQueueDeleted(q.name)
   }
 
-  void ensureDeleted(String q) {
+  void ensureQueueDeleted(String q) {
     def tmpCh = conn.createChannel()
     try {
       tmpCh.queueDeclarePassive(q)
@@ -88,8 +88,26 @@ abstract class IntegrationSpec extends Specification {
     }
   }
 
+  void ensureExchangeDeleted(Exchange x) {
+    ensureExchangeDeleted(x.name)
+  }
+
+  void ensureExchangeDeleted(String x) {
+    def tmpCh = conn.createChannel()
+    try {
+      tmpCh.exchangeDeclarePassive(x)
+      assert false
+    } catch (IOException ignored) {
+      // expected
+    }
+  }
+
   String randomQueueName() {
-    UUID.randomUUID().toString()
+    "q" + UUID.randomUUID().toString()
+  }
+
+  String randomExchangeName() {
+    "x" + UUID.randomUUID().toString()
   }
 
   def boolean awaitOn(CountDownLatch latch) {

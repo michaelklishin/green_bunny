@@ -14,7 +14,7 @@ class QueueDeleteSpec extends IntegrationSpec {
     q.delete()
 
     then: "operation succeeds"
-    ensureDeleted(q)
+    ensureQueueDeleted(q)
   }
 
 
@@ -30,6 +30,6 @@ class QueueDeleteSpec extends IntegrationSpec {
     ch.queueDelete(q.name)
 
     then: "operation succeeds"
-    ensureDeleted(q)
+    ensureQueueDeleted(q)
   }
 }
