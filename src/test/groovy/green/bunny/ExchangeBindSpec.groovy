@@ -22,6 +22,7 @@ class ExchangeBindSpec extends IntegrationSpec {
 
     cleanup:
     [x1, x2, x3].each { it.delete() }
+    q.delete()
 
     where:
     n << (1..10)
