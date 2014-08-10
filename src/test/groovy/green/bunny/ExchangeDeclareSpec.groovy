@@ -9,7 +9,6 @@ class ExchangeDeclareSpec extends IntegrationSpec {
   def "accessing default exchange"() {
     when: "default exchange (singleton) is accessed"
     def e = ch.defaultExchange()
-    println(e)
 
     then: "durable, non-auto-delete, predefined direct exchange is returned"
     e.isPredefined
