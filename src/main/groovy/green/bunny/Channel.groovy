@@ -174,9 +174,16 @@ class Channel {
         exclusive, arguments, consumer)
   }
 
-
   def void basicCancel(String consumerTag) {
     delegate.basicCancel(consumerTag)
+  }
+
+  def void basicAck(long deliveryTag) {
+    basicAck(deliveryTag, false)
+  }
+
+  def void basicAck(long deliveryTag, boolean multiple) {
+    delegate.basicAck(deliveryTag, multiple)
   }
 
   def void basicPublish(Map<String, Object> opts, String exchange, String payload) {

@@ -22,21 +22,24 @@ class BasicConsumeSpec extends IntegrationSpec {
       this.latch
     }
 
-    /**
-     * Called when a <code><b>basic.deliver</b></code> is received for this consumer.
-     * @param consumerTag the <i>consumer tag</i> associated with the consumer
-     * @param envelope packaging data for the message
-     * @param properties content header data for the message
-     * @param body the message body (opaque, client-specific byte array)
-     * @throws IOException if the consumer encounters an I/O error while processing the message
-     * @see Envelope
-     */
     @Override
     void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
       this.latch.countDown()
       this.latestDeliveryEnvelope = envelope
       this.latestDeliveryProperties = properties
       this.latestDeliveryBody = body
+    }
+  }
+
+  class ConfirmingDeliveryCatcher extends DeliveryCatcher {
+    ConfirmingDeliveryCatcher(Channel ch, CountDownLatch latch) {
+      super(ch, latch)
+    }
+
+    @Override
+    void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
+      this.channel.basicAck(envelope.deliveryTag)
+      super.handleDelivery(consumerTag, envelope, properties, body)
     }
   }
 
@@ -124,5 +127,32 @@ class BasicConsumeSpec extends IntegrationSpec {
     "tag_2"     | 3
     "tag 3"     | 4
     "4 tag"     | 5
+  }
+
+  def "adding a consumer as object to server-named queue with manual acknowledgements"(int n) {
+    given: "server-named queue"
+    def q = ch.queue()
+
+    and: "$n messages to deliver"
+    def l = new CountDownLatch(n)
+
+    when: "client adds a consumer"
+    def cons = new ConfirmingDeliveryCatcher(ch, l)
+    def tag  = q.subscribeWith(cons, autoAck: false)
+
+    and: "client publisher a message"
+    n.times { q.publish("hello") }
+
+    then: "operation succeeds"
+    !(tag == null)
+    cons.channel == ch
+    awaitOn(cons.latch)
+
+    cleanup:
+    cons.cancel()
+    q.delete()
+
+    where:
+    n << (1..5)
   }
 }
