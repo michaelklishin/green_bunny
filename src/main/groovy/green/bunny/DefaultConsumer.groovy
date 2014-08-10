@@ -105,14 +105,4 @@ class DefaultConsumer implements Consumer {
   void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
     // no-op
   }
-
-  /**
-   * Cancels
-   * @return the <i>consumer tag</i> this consumer instance was previously using
-   */
-  String cancel() {
-    // TODO: synchronize access to _consumerTag
-    channel.basicCancel(this._consumerTag)
-    this._consumerTag
-  }
 }

@@ -34,4 +34,18 @@ class SingleQueueConsumer extends DefaultConsumer {
   void handleConsumeOk(String consumerTag) {
     this._consumerTag = consumerTag
   }
+
+  //
+  // Implementation
+  //
+
+  /**
+   * Cancels
+   * @return the <i>consumer tag</i> this consumer instance was previously using
+   */
+  String cancel() {
+    // TODO: synchronize access to _consumerTag
+    channel.basicCancel(this._consumerTag)
+    this._consumerTag
+  }
 }
