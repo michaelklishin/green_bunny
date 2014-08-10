@@ -1,6 +1,6 @@
 package green.bunny
 
-class ExchangeDeclare extends IntegrationSpec {
+class ExchangeDeclareSpec extends IntegrationSpec {
 
   //
   // High-level API
