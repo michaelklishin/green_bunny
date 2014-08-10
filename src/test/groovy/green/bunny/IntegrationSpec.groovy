@@ -7,6 +7,7 @@ import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
 abstract class IntegrationSpec extends Specification {
+  public static final int STANDARD_WAITING_PERIOD = 3
   def Connection conn
   def Channel ch
 
@@ -92,6 +93,6 @@ abstract class IntegrationSpec extends Specification {
   }
 
   def boolean awaitOn(CountDownLatch latch) {
-    latch.await(1, TimeUnit.SECONDS)
+    latch.await(STANDARD_WAITING_PERIOD, TimeUnit.SECONDS)
   }
 }
