@@ -67,6 +67,18 @@ class Exchange {
   }
 
   //
+  // Publishing
+  //
+
+  def void publish(Map<String, Object> opts, String payload) {
+    this.channel.basicPublish(opts, this.name, payload)
+  }
+
+  def void publish(Map<String, Object> opts, byte[] payload) {
+    this.channel.basicPublish(opts, this.name, payload)
+  }
+
+  //
   // Deletion
   //
 

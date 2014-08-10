@@ -3,6 +3,8 @@ package green.bunny
 import spock.lang.Specification
 
 import java.security.SecureRandom
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
 
 abstract class IntegrationSpec extends Specification {
   def Connection conn
@@ -87,5 +89,9 @@ abstract class IntegrationSpec extends Specification {
 
   String randomQueueName() {
     UUID.randomUUID().toString()
+  }
+
+  def boolean awaitOn(CountDownLatch latch) {
+    latch.await(1, TimeUnit.SECONDS)
   }
 }

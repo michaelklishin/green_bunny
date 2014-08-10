@@ -1,5 +1,7 @@
 package green.bunny
 
+import com.rabbitmq.client.Consumer
+
 class Queue {
   public static final String SERVER_NAMED = ""
 
@@ -71,11 +73,32 @@ class Queue {
   }
 
   //
+  // Consumers
+  //
+
+  def String subscribeWith(Consumer consumer) {
+    // TODO: add consumer to the map of consumers
+    this.channel.basicConsume(this, consumer)
+  }
+
+  def subscribe(deliveryHandler) {
+
+  }
+
+  //
   // Deletion
   //
 
   def delete() {
     this.channel.queueDelete(this.name)
+  }
+
+  //
+  // Publishing (uses default exchange)
+  //
+
+  def publish(String payload) {
+    this.channel.defaultExchange.publish(payload, routingKey: this.name)
   }
 
   //

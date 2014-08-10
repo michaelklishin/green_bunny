@@ -1,11 +1,21 @@
 package green.bunny
 
+import com.rabbitmq.client.AMQP
 import com.rabbitmq.client.AMQP.Queue.DeclareOk    as QDeclareOk
 import com.rabbitmq.client.AMQP.Queue.DeleteOk     as QDeleteOk
 import com.rabbitmq.client.AMQP.Exchange.DeclareOk as EDeclareOk
 import com.rabbitmq.client.AMQP.Exchange.DeleteOk  as EDeleteOk
+import com.rabbitmq.client.Consumer
 
 class Channel {
+  public static final String DEFAULT_CHARSET = "UTF-8"
+  public static final int PERSISTENT_DELIVERY_MODE = 2
+  public static final int TRANSIENT_DELIVERY_MODE = 1
+
+  //
+  // Fields
+  //
+
   protected com.rabbitmq.client.Channel delegate
   protected Exchange defaultExchange
 
@@ -87,6 +97,10 @@ class Channel {
     this.defaultExchange
   }
 
+  def getDefaultExchange() {
+    this.defaultExchange
+  }
+
   def Exchange fanout(String name) {
     fanout([:], name)
   }
@@ -151,5 +165,71 @@ class Channel {
 
   def EDeclareOk exchangeDeclarePassive(String name) {
     delegate.exchangeDeclarePassive(name)
+  }
+
+  def String basicConsume(Queue q, Consumer consumer) {
+    delegate.basicConsume(q.name, consumer)
+  }
+
+  def void basicCancel(String consumerTag) {
+    delegate.basicCancel(consumerTag)
+  }
+
+  def void basicPublish(Map<String, Object> opts, String exchange, String payload) {
+    basicPublish(opts, exchange, payload.getBytes(DEFAULT_CHARSET))
+  }
+
+  def void basicPublish(Map<String, Object> opts, String exchange, byte[] payload) {
+    delegate.basicPublish(exchange, routingKeyFrom(opts), basicPropertiesFrom(opts), payload)
+  }
+
+  AMQP.BasicProperties basicPropertiesFrom(Map<String, Object> opts) {
+    def builder = new AMQP.BasicProperties.Builder()
+    // TODO: use extension methods to add Map#getString()
+    // TODO: can a bit of metaprogramming make this clearer? Worth investigating.
+    builder.appId(opts.get("appId") as String)
+    builder.clusterId(opts.get("clusterId") as String)
+    builder.contentEncoding(opts.get("contentEncoding") as String)
+    builder.correlationId(opts.get("correlationId") as String)
+    builder.deliveryMode(deliveryModeFrom(opts))
+    builder.expiration(opts.get("expiration") as String)
+    builder.contentType(opts.get("contentType", "application/octet-stream") as String)
+    builder.headers(opts.get("headers") as Map<String, Object>)
+    builder.messageId(opts.get("messageId") as String)
+    builder.replyTo(opts.get("replyTo") as String)
+    builder.type(opts.get("type") as String)
+    builder.priority(opts.get("priority") as Integer)
+    builder.timestamp(timestampFrom(opts))
+
+    builder.build()
+  }
+
+  protected String routingKeyFrom(Map opts) {
+    opts.get("routingKey") as String
+  }
+
+  //
+  // Implementation
+  //
+
+  protected Integer deliveryModeFrom(Map<String, Object> opts) {
+    if(opts.containsKey("deliveryMode")) {
+      return opts.get("deliveryMode") as Integer
+    }
+
+    if(opts.containsKey("persistent")) {
+      if(opts.get("persistent") as boolean) {
+        return PERSISTENT_DELIVERY_MODE
+      } else {
+        return TRANSIENT_DELIVERY_MODE
+      }
+    }
+
+    TRANSIENT_DELIVERY_MODE
+  }
+
+  protected Date timestampFrom(Map<String, Object> opts) {
+    // TODO: support Joda Time types, e.g. DateTime
+    opts.get("timestamp") as Date
   }
 }
