@@ -93,4 +93,20 @@ class ExchangeDeclareSpec extends IntegrationSpec {
     UUID.randomUUID().toString() |   true  |    false
   }
 
+  def "declaring a direct exchange with all defaults"() {
+    when: "exchange is declared"
+    def e = ch.direct(s)
+
+    then: "operation succeeds"
+    ensureDeclared(ch, e)
+    !e.isPredefined
+    !e.isDurable
+    !e.isAutoDelete
+
+    cleanup:
+    e.delete()
+
+    where:
+    s << (0..100).collect { UUID.randomUUID().toString() }
+  }
 }
