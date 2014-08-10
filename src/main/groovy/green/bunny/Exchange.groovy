@@ -87,6 +87,19 @@ class Exchange {
   }
 
   //
+  // Binding
+  //
+
+  def Exchange bind(Exchange source) {
+    this.channel.exchangeBind(this.name, source.name, "")
+    this
+  }
+
+  def Exchange bind(Map<String, Object> opts, Exchange source) {
+    this.channel.exchangeBind(this.name, source.name, opts.get("routingKey"), opts.get("arguments"))
+  }
+
+  //
   // Deletion
   //
 

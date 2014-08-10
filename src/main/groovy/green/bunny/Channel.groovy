@@ -6,6 +6,7 @@ import com.rabbitmq.client.AMQP.Queue.DeleteOk     as QDeleteOk
 import com.rabbitmq.client.AMQP.Exchange.DeclareOk as EDeclareOk
 import com.rabbitmq.client.AMQP.Exchange.DeleteOk  as EDeleteOk
 import com.rabbitmq.client.AMQP.Queue.BindOk       as QBindOk
+import com.rabbitmq.client.AMQP.Exchange.BindOk    as EBindOk
 
 import com.rabbitmq.client.Consumer
 
@@ -214,6 +215,15 @@ class Channel {
 
   def QBindOk queueBind(String q, String x, String routingKey, Map<String, Object> arguments) {
     delegate.queueBind(q, x, routingKey, arguments)
+  }
+
+  def EBindOk exchangeBind(String destination, String source, String routingKey) {
+    delegate.exchangeBind(destination, source, routingKey)
+  }
+
+  def EBindOk exchangeBind(String destination, String source, String routingKey,
+                           Map<String, Object> arguments) {
+    delegate.exchangeBind(destination, source, routingKey, arguments)
   }
 
 
