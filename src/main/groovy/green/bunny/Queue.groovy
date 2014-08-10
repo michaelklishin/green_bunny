@@ -77,8 +77,17 @@ class Queue {
   //
 
   def String subscribeWith(Consumer consumer) {
+    subscribeWith([:], consumer)
+  }
+
+  def String subscribeWith(Map<String, Object> opts, Consumer consumer) {
     // TODO: add consumer to the map of consumers
-    this.channel.basicConsume(this, consumer)
+    this.channel.basicConsume(this.name,
+        opts.get("autoAck", true) as boolean,
+        opts.get("consumerTag", "") as String,
+        opts.get("exclusive", false) as boolean,
+        opts.get("arguments") as Map<String, Object>,
+        consumer)
   }
 
   def subscribe(deliveryHandler) {

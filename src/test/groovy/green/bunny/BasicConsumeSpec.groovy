@@ -64,7 +64,7 @@ class BasicConsumeSpec extends IntegrationSpec {
     q.delete()
 
     where:
-    n << (1..100)
+    n << (1..5)
   }
 
   def "adding a consumer as object to client-named queue w/o provided consumer tag"(int n) {
@@ -91,6 +91,38 @@ class BasicConsumeSpec extends IntegrationSpec {
     q.delete()
 
     where:
-    n << (1..100)
+    n << (1..5)
+  }
+
+  def "adding a consumer as object to server-named queue with provided consumer tag"(String consumerTag, int n) {
+    given: "server-named queue"
+    def q = ch.queue()
+
+    and: "$n messages to deliver"
+    def l = new CountDownLatch(n)
+
+    when: "client adds a consumer"
+    def cons = new DeliveryCatcher(ch, l)
+    def tag  = q.subscribeWith(cons, consumerTag: consumerTag)
+
+    and: "client publisher a message"
+    n.times { q.publish("hello") }
+
+    then: "operation succeeds"
+    tag == consumerTag
+    cons.channel == ch
+    awaitOn(cons.latch)
+
+    cleanup:
+    ch.basicCancel(consumerTag)
+    q.delete()
+
+    where:
+    consumerTag | n
+    "tag1"      | 1
+    "123123"    | 2
+    "tag_2"     | 3
+    "tag 3"     | 4
+    "4 tag"     | 5
   }
 }

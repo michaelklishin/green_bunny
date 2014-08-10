@@ -167,9 +167,13 @@ class Channel {
     delegate.exchangeDeclarePassive(name)
   }
 
-  def String basicConsume(Queue q, Consumer consumer) {
-    delegate.basicConsume(q.name, consumer)
+  def String basicConsume(String q, boolean autoAck, String consumerTag,
+                          boolean exclusive, Map<String, Object> arguments,
+                          Consumer consumer) {
+    delegate.basicConsume(q, autoAck, consumerTag, false,
+        exclusive, arguments, consumer)
   }
+
 
   def void basicCancel(String consumerTag) {
     delegate.basicCancel(consumerTag)
