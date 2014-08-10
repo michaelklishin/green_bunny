@@ -39,6 +39,7 @@ class BasicConsumeSpec extends IntegrationSpec {
       this.latestDeliveryBody = body
     }
   }
+
   def "adding a consumer as object to server-named queue"(int n) {
     given: "server-named queue"
     def q = ch.queue()
