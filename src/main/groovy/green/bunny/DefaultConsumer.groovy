@@ -10,17 +10,21 @@ import com.rabbitmq.client.ShutdownSignalException
  * of Green Bunny's Channel class.
  */
 class DefaultConsumer implements Consumer {
-  /**
-   * Constructs a new instance and records its association to the passed-in channel.
-   * @param channel the channel to which this consumer is attached
-   */
-  Channel _channel
-  String _consumerTag
+
+  //
+  // Fields
+  //
+
+  protected Channel _channel
 
   //
   // Constructors
   //
 
+  /**
+   * Constructs a new instance and records its association to the passed-in channel.
+   * @param channel the channel to which this consumer is attached
+   */
   DefaultConsumer(Channel ch) {
     this._channel = ch
   }
@@ -33,10 +37,6 @@ class DefaultConsumer implements Consumer {
     this._channel
   }
 
-  def String getConsumerTag() {
-    this._consumerTag
-  }
-
   /**
    * Called when the consumer is registered by a call to any of the
    * {@link Channel#basicConsume} methods.
@@ -45,7 +45,7 @@ class DefaultConsumer implements Consumer {
 
   @Override
   void handleConsumeOk(String consumerTag) {
-    this._consumerTag = consumerTag
+    // no-op
   }
 
   /**
@@ -106,6 +106,10 @@ class DefaultConsumer implements Consumer {
     // no-op
   }
 
+  /**
+   * Cancels
+   * @return the <i>consumer tag</i> this consumer instance was previously using
+   */
   String cancel() {
     // TODO: synchronize access to _consumerTag
     channel.basicCancel(this._consumerTag)

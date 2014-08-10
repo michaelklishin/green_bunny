@@ -6,7 +6,7 @@ import com.rabbitmq.client.Envelope
 import java.util.concurrent.CountDownLatch
 
 class BasicConsumeSpec extends IntegrationSpec {
-  class DeliveryCatcher extends DefaultConsumer {
+  class DeliveryCatcher extends SingleQueueConsumer {
     protected CountDownLatch latch
 
     Envelope latestDeliveryEnvelope
