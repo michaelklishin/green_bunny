@@ -5,6 +5,8 @@ import com.rabbitmq.client.AMQP.Queue.DeclareOk    as QDeclareOk
 import com.rabbitmq.client.AMQP.Queue.DeleteOk     as QDeleteOk
 import com.rabbitmq.client.AMQP.Exchange.DeclareOk as EDeclareOk
 import com.rabbitmq.client.AMQP.Exchange.DeleteOk  as EDeleteOk
+import com.rabbitmq.client.AMQP.Queue.BindOk       as QBindOk
+
 import com.rabbitmq.client.Consumer
 
 class Channel {
@@ -133,6 +135,18 @@ class Channel {
     exchange(opts, name, "headers")
   }
 
+  def void confirmSelect() {
+    delegate.confirmSelect()
+  }
+
+  def boolean waitForConfirms() {
+    delegate.waitForConfirms()
+  }
+
+  def boolean waitForConfirms(long timeout) {
+    delegate.waitForConfirms(timeout)
+  }
+
   //
   // Lower-level API
   //
@@ -194,6 +208,19 @@ class Channel {
     delegate.basicPublish(exchange, routingKeyFrom(opts), basicPropertiesFrom(opts), payload)
   }
 
+  def QBindOk queueBind(String q, String x, String routingKey) {
+    delegate.queueBind(q, x, routingKey)
+  }
+
+  def QBindOk queueBind(String q, String x, String routingKey, Map<String, Object> arguments) {
+    delegate.queueBind(q, x, routingKey, arguments)
+  }
+
+
+  //
+  // Implementation
+  //
+
   AMQP.BasicProperties basicPropertiesFrom(Map<String, Object> opts) {
     def builder = new AMQP.BasicProperties.Builder()
     // TODO: use extension methods to add Map#getString()
@@ -216,12 +243,8 @@ class Channel {
   }
 
   protected String routingKeyFrom(Map opts) {
-    opts.get("routingKey") as String
+    opts.get("routingKey", "") as String
   }
-
-  //
-  // Implementation
-  //
 
   protected Integer deliveryModeFrom(Map<String, Object> opts) {
     if(opts.containsKey("deliveryMode")) {

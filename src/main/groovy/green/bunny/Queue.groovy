@@ -72,6 +72,14 @@ class Queue {
     this.arguments
   }
 
+  def long messageCount() {
+    channel.queueDeclarePassive(this.name).messageCount
+  }
+
+  def long consumerCount() {
+    channel.queueDeclarePassive(this.name).consumerCount
+  }
+
   //
   // Consumers
   //
@@ -92,6 +100,20 @@ class Queue {
 
   def subscribe(deliveryHandler) {
 
+  }
+
+  //
+  // Bindings
+  //
+
+  def Queue bind(Exchange x) {
+    this.channel.queueBind(this.name, x.name, "")
+    this
+  }
+
+  def Queue bind(Map<String, Object> opts, Exchange x) {
+    this.channel.queueBind(this.name, x.name, opts.get("routingKey"), opts.get("arguments"))
+    this
   }
 
   //

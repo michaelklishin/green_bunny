@@ -70,6 +70,14 @@ class Exchange {
   // Publishing
   //
 
+  def void publish(String payload) {
+    publish([:], payload)
+  }
+
+  def void publish(byte[] payload) {
+    publish([:], payload)
+  }
+
   def void publish(Map<String, Object> opts, String payload) {
     this.channel.basicPublish(opts, this.name, payload)
   }
