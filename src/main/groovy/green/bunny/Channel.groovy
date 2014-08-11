@@ -99,7 +99,7 @@ class Channel {
     e
   }
 
-  def defaultExchange() {
+  def Exchange defaultExchange() {
     this.defaultExchange
   }
 

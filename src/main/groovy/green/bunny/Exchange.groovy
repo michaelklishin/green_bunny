@@ -102,6 +102,7 @@ class Exchange {
     this.channel.exchangeBind(this.name, source.name,
         opts.get("routingKey") as String,
         opts.get("arguments") as Map<String, Object>)
+    this
   }
 
   //

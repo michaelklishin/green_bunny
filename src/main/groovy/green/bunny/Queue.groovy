@@ -168,15 +168,16 @@ class Queue {
   // Publishing (uses default exchange)
   //
 
-  def publish(String payload) {
-    this.channel.defaultExchange.publish(payload, routingKey: this.name)
+  def void publish(String payload) {
+    // this.channel.defaultExchange.publish(["routingKey": this.name] as Map<String, Object>, payload)
+    this.channel.basicPublish(["routingKey": this.name] as Map<String, Object>, "", payload)
   }
 
   //
   // Implementation
   //
 
-  def performDeclare() {
+  def String performDeclare() {
     this.name = this.channel.queueDeclare(name, durable, exclusive, autoDelete, arguments).queue
     this.name
   }
