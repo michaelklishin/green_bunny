@@ -1,5 +1,8 @@
 package green.bunny
 
+import groovy.transform.TypeChecked
+
+@TypeChecked
 class Exchange {
   public static Set<String> KNOWN_EXCHANGE_TYPES =
       ["direct", "fanout", "topic", "headers"].toSet().asImmutable()
@@ -96,7 +99,9 @@ class Exchange {
   }
 
   def Exchange bind(Map<String, Object> opts, Exchange source) {
-    this.channel.exchangeBind(this.name, source.name, opts.get("routingKey"), opts.get("arguments"))
+    this.channel.exchangeBind(this.name, source.name,
+        opts.get("routingKey") as String,
+        opts.get("arguments") as Map<String, Object>)
   }
 
   //
