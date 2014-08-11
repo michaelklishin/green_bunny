@@ -109,7 +109,7 @@ class Exchange {
   // Deletion
   //
 
-  def delete() {
+  def void delete() {
     this.channel.exchangeDelete(this.name)
   }
 

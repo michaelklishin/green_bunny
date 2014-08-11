@@ -160,7 +160,7 @@ class Queue {
   // Deletion
   //
 
-  def delete() {
+  def void delete() {
     this.channel.queueDelete(this.name)
   }
 
