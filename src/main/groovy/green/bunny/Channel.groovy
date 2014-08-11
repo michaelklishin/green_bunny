@@ -212,6 +212,10 @@ class Channel {
     delegate.basicAck(deliveryTag, multiple)
   }
 
+  def void basicReject(long deliveryTag, boolean requeue) {
+    delegate.basicReject(deliveryTag, requeue)
+  }
+
   def void basicPublish(Map<String, Object> opts, String exchange, String payload) {
     basicPublish(opts, exchange, payload.getBytes(DEFAULT_CHARSET))
   }

@@ -32,4 +32,32 @@ class BasicRejectSpec extends IntegrationSpec {
     where:
     n << (1..5)
   }
+
+  def "rejecting a message with re-queue = true"(int n) {
+    given: "server-named queue"
+    def q = ch.queue()
+
+    and:
+    "$n messages to deliver"
+    def l = new CountDownLatch(n)
+
+    when: "client basic.gets $n messages"
+    n.times { q.publish("hello") }
+    def xs = []
+    n.times {
+      xs.add(q.get(false).envelope.deliveryTag)
+    }
+
+    and: "re-queues them all"
+    xs.each { long it -> ch.basicReject(it, true) }
+
+    then: "there are $n messages ready in the queue"
+    q.messageCount() == n
+
+    cleanup:
+    q.delete()
+
+    where:
+    n << (1..5)
+  }
 }
