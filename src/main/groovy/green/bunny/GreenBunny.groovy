@@ -35,7 +35,7 @@ class GreenBunny {
     cf
   }
 
-  static def maybeEnableTLS(ConnectionFactory cf, def map) {
+  static def maybeEnableTLS(ConnectionFactory cf, Map<String, Object> map) {
     if(map.get("tls")) {
       cf.useSslProtocol()
     }
