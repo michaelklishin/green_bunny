@@ -237,6 +237,10 @@ class Channel {
     delegate.exchangeBind(destination, source, routingKey, arguments)
   }
 
+  def AMQP.Queue.PurgeOk queuePurge(String q) {
+    delegate.queuePurge(q)
+  }
+
 
   //
   // Implementation

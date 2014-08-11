@@ -140,6 +140,19 @@ class Queue {
   }
 
   //
+  // Purging
+  //
+
+  def Queue purge() {
+    this.channel.queuePurge(this.name)
+    this
+  }
+
+  def boolean getIsEmpty() {
+    messageCount() == 0
+  }
+
+  //
   // Deletion
   //
 
