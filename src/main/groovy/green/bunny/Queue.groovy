@@ -169,7 +169,6 @@ class Queue {
   //
 
   def void publish(String payload) {
-    // this.channel.defaultExchange.publish(["routingKey": this.name] as Map<String, Object>, payload)
     this.channel.basicPublish(["routingKey": this.name] as Map<String, Object>, "", payload)
   }
 
