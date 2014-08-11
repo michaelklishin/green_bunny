@@ -10,7 +10,9 @@ import com.rabbitmq.client.AMQP.Exchange.BindOk    as EBindOk
 
 import com.rabbitmq.client.Consumer
 import com.rabbitmq.client.GetResponse
+import groovy.transform.TypeChecked
 
+@TypeChecked
 class Channel {
   public static final String DEFAULT_CHARSET = "UTF-8"
   public static final int PERSISTENT_DELIVERY_MODE = 2

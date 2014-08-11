@@ -1,7 +1,9 @@
 package green.bunny
 
 import com.rabbitmq.client.ConnectionFactory
+import groovy.transform.TypeChecked
 
+@TypeChecked
 class Connection {
   def com.rabbitmq.client.Connection delegate
   def ConnectionFactory cf

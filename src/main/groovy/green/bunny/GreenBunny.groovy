@@ -1,9 +1,11 @@
 package green.bunny
 
 import com.rabbitmq.client.ConnectionFactory
+import groovy.transform.TypeChecked
 
 import javax.net.ssl.SSLContext
 
+@TypeChecked
 class GreenBunny {
   static Connection connect() {
     def cf = new ConnectionFactory()

@@ -4,11 +4,13 @@ import com.rabbitmq.client.AMQP
 import com.rabbitmq.client.Consumer
 import com.rabbitmq.client.Envelope
 import com.rabbitmq.client.ShutdownSignalException
+import groovy.transform.TypeChecked
 
 /**
  * This is a version of {@link com.rabbitmq.client.DefaultConsumer} that is aware
  * of Green Bunny's Channel class.
  */
+@TypeChecked
 class DefaultConsumer implements Consumer {
 
   //

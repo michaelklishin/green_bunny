@@ -1,5 +1,8 @@
 package green.bunny
 
+import groovy.transform.TypeChecked
+
+@TypeChecked
 class SingleQueueConsumer extends DefaultConsumer {
 
   //
