@@ -1,6 +1,7 @@
 package green.bunny
 
 import com.rabbitmq.client.Consumer
+import com.rabbitmq.client.GetResponse
 
 class Queue {
   public static final String SERVER_NAMED = ""
@@ -111,6 +112,17 @@ class Queue {
 
   def subscribe(deliveryHandler) {
 
+  }
+
+  //
+  // basic.get ("pull API")
+  //
+
+  def GetResponse get() {
+    get(true)
+  }
+  def GetResponse get(boolean autoAck) {
+    this.channel.basicGet(this.name, autoAck)
   }
 
   //
