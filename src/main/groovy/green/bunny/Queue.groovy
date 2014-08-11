@@ -2,7 +2,9 @@ package green.bunny
 
 import com.rabbitmq.client.Consumer
 import com.rabbitmq.client.GetResponse
+import groovy.transform.TypeChecked
 
+@TypeChecked
 class Queue {
   public static final String SERVER_NAMED = ""
 
@@ -135,7 +137,9 @@ class Queue {
   }
 
   def Queue bind(Map<String, Object> opts, Exchange x) {
-    this.channel.queueBind(this.name, x.name, opts.get("routingKey"), opts.get("arguments"))
+    this.channel.queueBind(this.name, x.name,
+        opts.get("routingKey") as String,
+        opts.get("arguments") as Map<String, Object>)
     this
   }
 
