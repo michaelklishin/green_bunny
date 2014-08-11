@@ -80,6 +80,17 @@ class Queue {
     channel.queueDeclarePassive(this.name).consumerCount
   }
 
+  @Override
+  def String toString() {
+    "<" +
+        "name = " + name +
+        ", durable = " + isDurable.toString() +
+        ", exclusive = " + isExclusive.toString() +
+        ", autoDelete = " + isAutoDelete.toString() +
+        ", arguments = " + arguments.toString() +
+    ">"
+  }
+
   //
   // Consumers
   //
