@@ -112,8 +112,22 @@ class Queue {
         consumer)
   }
 
-  def subscribe(deliveryHandler) {
+  def ClosureDelegateConsumer subscribe(Closure deliveryHandler) {
+    def cons = new ClosureDelegateConsumer(this.channel, deliveryHandler)
+    subscribeWith(cons)
+    cons
+  }
 
+  def ClosureDelegateConsumer subscribe(Map<String, Object> opts, Closure deliveryHandler) {
+    def cons = new ClosureDelegateConsumer(this.channel, deliveryHandler)
+    subscribeWith(opts, cons)
+    cons
+  }
+
+  def ClosureDelegateConsumer subscribe(Map<String, Object> opts, Closure deliveryHandler, Closure cancelHandler) {
+    def cons = new ClosureDelegateConsumer(this.channel, deliveryHandler, cancelHandler)
+    subscribeWith(opts, cons)
+    cons
   }
 
   //
