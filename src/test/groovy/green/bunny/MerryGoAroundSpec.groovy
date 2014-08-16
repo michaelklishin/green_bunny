@@ -44,21 +44,15 @@ class MerryGoAroundSpec extends IntegrationSpec {
 
     final ch2 = c2.createChannel()
     final q2  = ch2.queue()
-    q2.subscribe({ Channel ch, Envelope envelope,
-                       AMQP.BasicProperties properties, byte[] body ->
-      q1.publish(body) })
+    q2.subscribe(republishTo(q1))
 
     final ch3 = c3.createChannel()
     final q3  = ch3.queue()
-    q3.subscribe({ Channel ch, Envelope envelope,
-                       AMQP.BasicProperties properties, byte[] body ->
-      q2.publish(body) })
+    q3.subscribe(republishTo(q2))
 
     final ch4 = c4.createChannel()
     final q4  = ch4.queue()
-    q4.subscribe({ Channel ch, Envelope envelope,
-                       AMQP.BasicProperties properties, byte[] body ->
-      q3.publish(body) })
+    q4.subscribe(republishTo(q3))
 
     when: "a message is published to the beginning of pipeline"
     n.times { q4.publish("msg $it") }

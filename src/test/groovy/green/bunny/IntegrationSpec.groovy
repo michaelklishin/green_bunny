@@ -1,5 +1,7 @@
 package green.bunny
 
+import com.rabbitmq.client.AMQP
+import com.rabbitmq.client.Envelope
 import spock.lang.Specification
 
 import java.security.SecureRandom
@@ -112,5 +114,12 @@ abstract class IntegrationSpec extends Specification {
 
   def boolean awaitOn(CountDownLatch latch) {
     latch.await(STANDARD_WAITING_PERIOD, TimeUnit.SECONDS)
+  }
+
+  def republishTo(Queue q) {
+    return { Channel ch, Envelope envelope,
+             AMQP.BasicProperties properties, byte[] body ->
+      q.publish(body)
+    }
   }
 }
