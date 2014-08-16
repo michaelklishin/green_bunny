@@ -183,6 +183,10 @@ class Queue {
   //
 
   def void publish(String payload) {
+    publish(payload.getBytes("UTF-8"))
+  }
+
+  def void publish(byte[] payload) {
     this.channel.basicPublish(["routingKey": this.name] as Map<String, Object>, "", payload)
   }
 
