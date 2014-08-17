@@ -16,20 +16,9 @@ class ConnectionRecoverySpec extends IntegrationSpec {
   def "connection recovery"() {
     given: "an open connection that automatically recovers"
     final conn   = connect(true, true)
-    final latch1 = new CountDownLatch(1)
-    final latch2 = new CountDownLatch(1)
-    assert conn.isOpen
-    conn.addShutdownListener { latch1.countDown() }
-    final rl = conn.addRecoveryListener { latch2.countDown() }
-    assert rl != null
 
     when: "the connection is forcefully closed"
-    closeAllConnections()
-    assert !conn.isOpen
-
-    and: "recovery completes"
-    assert awaitOn(latch1)
-    assert awaitOn(latch2)
+    closeAndWaitForRecovery(conn)
 
     then: "connection is opened again"
     conn.isOpen
@@ -38,5 +27,28 @@ class ConnectionRecoverySpec extends IntegrationSpec {
     if(conn.isOpen) {
       conn.close()
     }
+  }
+
+  protected void closeAndWaitForRecovery(Connection conn) {
+    final latch1 = prepareShutdownLatch(conn)
+    final latch2 = prepareRecoveryLatch(conn)
+    closeAllConnections()
+    assert !conn.isOpen
+    assert awaitOn(latch1)
+    assert awaitOn(latch2)
+  }
+
+  protected CountDownLatch prepareRecoveryLatch(Connection conn) {
+    final latch = new CountDownLatch(1)
+    final rl    = conn.addRecoveryListener { latch.countDown() }
+    assert rl != null
+    latch
+  }
+
+  protected CountDownLatch prepareShutdownLatch(Connection conn) {
+    final latch = new CountDownLatch(1)
+    conn.addShutdownListener { latch.countDown() }
+
+    latch
   }
 }
