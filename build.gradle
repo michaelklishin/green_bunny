@@ -3,12 +3,17 @@ apply plugin: 'groovy'
 version = '1.0.0-SNAPSHOT'
 
 repositories {
-    mavenCentral()
+  mavenCentral()
+
+  maven {
+    url "http://clojars.org/repo"
+  }
 }
 
 dependencies {
-    compile "org.codehaus.groovy:groovy-all:2.3.6"
-    compile "com.rabbitmq:amqp-client:3.3.4"
+  compile "org.codehaus.groovy:groovy-all:2.3.6"
+  compile "com.rabbitmq:amqp-client:3.3.4"
 
-    testCompile "org.spockframework:spock-core:0.7-groovy-2.0"
+  testCompile "org.spockframework:spock-core:0.7-groovy-2.0"
+  testCompile "com.novemberain.hop:hop:1.0.0-beta2"
 }
