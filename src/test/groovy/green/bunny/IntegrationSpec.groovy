@@ -1,5 +1,6 @@
 package green.bunny
 
+import com.novemberain.hop.client.Client
 import com.rabbitmq.client.AMQP
 import com.rabbitmq.client.Envelope
 import spock.lang.Specification
@@ -12,6 +13,7 @@ abstract class IntegrationSpec extends Specification {
   public static final int STANDARD_WAITING_PERIOD = 3
   def Connection conn
   def Channel ch
+  final Client httpClient = new Client("http://127.0.0.1:15672/api/", "guest", "guest")
 
   def setup() {
     conn = connect()
@@ -19,7 +21,13 @@ abstract class IntegrationSpec extends Specification {
   }
 
   protected Connection connect() {
-    GreenBunny.connect()
+    connect(true, true)
+  }
+
+  protected Connection connect(boolean automaticallyRecover, boolean recoverTopology) {
+    GreenBunny.connect(["automaticallyRecover": automaticallyRecover,
+                        "recoverTopology": recoverTopology,
+                        "networkRecoveryInterval": 10])
   }
 
   protected Channel openChannel() {
@@ -120,6 +128,14 @@ abstract class IntegrationSpec extends Specification {
     return { Channel ch, Envelope envelope,
              AMQP.BasicProperties properties, byte[] body ->
       q.publish(body)
+    }
+  }
+
+  protected void closeAllConnections() {
+    final xs = httpClient.getConnections()
+    xs.each {
+      println("Closing connection ${it.name}")
+      httpClient.closeConnection(it.name)
     }
   }
 }

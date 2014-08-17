@@ -29,8 +29,12 @@ class GreenBunny {
 
     cf = maybeEnableTLS(cf, map)
 
-    cf.requestedHeartbeat = (map.get("requested_heartbeat") ?: ConnectionFactory.DEFAULT_HEARTBEAT) as Integer
-    cf.connectionTimeout  = (map.get("connection_timeout")  ?: ConnectionFactory.DEFAULT_CONNECTION_TIMEOUT) as Integer
+    cf.requestedHeartbeat       = map.get("requested_heartbeat", ConnectionFactory.DEFAULT_HEARTBEAT) as Integer
+    cf.connectionTimeout        = map.get("connection_timeout", ConnectionFactory.DEFAULT_CONNECTION_TIMEOUT) as Integer
+
+    cf.automaticRecoveryEnabled = map.get("automaticallyRecover", true) as boolean
+    cf.topologyRecoveryEnabled  = map.get("recoverTopology", true) as boolean
+    cf.networkRecoveryInterval  = map.get("networkRecoveryInterval", 5000) as int
 
     cf
   }
