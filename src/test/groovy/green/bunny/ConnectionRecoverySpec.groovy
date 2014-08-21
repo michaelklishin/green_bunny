@@ -21,11 +21,35 @@ class ConnectionRecoverySpec extends IntegrationSpec {
     closeAndWaitForRecovery(conn)
 
     then: "connection is opened again"
-    conn.isOpen
+    assert conn.isOpen
+    assert !conn.isClosed
 
     cleanup:
     if(conn.isOpen) {
       conn.close()
+    }
+  }
+
+  def "connection recovery with disabled topology recovery"() {
+    given: "an open connection that automatically recovers but does not recover topology"
+    final conn = connect(true, false)
+    final ch   = conn.createChannel()
+    final q    = ch.queue("java-client.test.recovery.q2", durable: false, autoDelete: true, exclusive: true);
+    ch.queueDeclarePassive(q.name)
+
+    when: "connection is force-closed and recovers"
+    closeAndWaitForRecovery(conn)
+
+    then: "the queue is not recovered"
+    try {
+      assert conn.isOpen
+      ch.queueDeclarePassive(q.name)
+      // we expect passive declare to throw
+      assert false
+    } catch (IOException ignored) {
+      // expected
+    } finally {
+      conn.abort()
     }
   }
 

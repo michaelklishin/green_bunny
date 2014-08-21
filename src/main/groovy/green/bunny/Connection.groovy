@@ -46,6 +46,10 @@ class Connection {
     delegate.close()
   }
 
+  def abort() {
+    delegate.abort()
+  }
+
   def boolean isClosed() {
     !isOpen()
   }
