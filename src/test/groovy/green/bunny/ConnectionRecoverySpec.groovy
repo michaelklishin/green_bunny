@@ -53,6 +53,20 @@ class ConnectionRecoverySpec extends IntegrationSpec {
     }
   }
 
+  def "shutdown listeners recovery"() {
+    given: "an open connection with a shutdown listener"
+    final conn  = connect(true, true)
+    final latch = new CountDownLatch(2)
+    conn.addShutdownListener { latch.countDown() }
+
+    when: "connection is force-closed and recovers"
+    closeAndWaitForRecovery(conn)
+    conn.close()
+
+    then: "the listener is recovered"
+    assert awaitOn(latch)
+  }
+
   protected void closeAndWaitForRecovery(Connection conn) {
     final latch1 = prepareShutdownLatch(conn)
     final latch2 = prepareRecoveryLatch(conn)
