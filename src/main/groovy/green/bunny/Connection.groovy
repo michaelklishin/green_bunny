@@ -4,7 +4,6 @@ import com.rabbitmq.client.BlockedListener
 import com.rabbitmq.client.ConnectionFactory
 import com.rabbitmq.client.RecoveryListener
 import com.rabbitmq.client.ShutdownListener
-import com.rabbitmq.client.ShutdownSignalException
 import com.rabbitmq.client.impl.recovery.AutorecoveringConnection
 import groovy.transform.TypeChecked
 
@@ -14,13 +13,13 @@ class Connection {
   def ConnectionFactory cf
 
   Connection(ConnectionFactory cf, com.rabbitmq.client.Connection delegate) {
-    this.cf       = cf
+    this.cf = cf
     this.delegate = delegate
   }
 
   def createChannel() {
     def ch = delegate.createChannel()
-    if(ch == null) {
+    if (ch == null) {
       null
     } else {
       new Channel(this, ch)
@@ -29,7 +28,7 @@ class Connection {
 
   def createChannel(int n) {
     def ch = delegate.createChannel(n)
-    if(ch == null) {
+    if (ch == null) {
       null
     } else {
       new Channel(this, ch)
@@ -39,6 +38,7 @@ class Connection {
   def boolean isOpen() {
     delegate.isOpen()
   }
+
   def boolean getIsOpen() {
     isOpen()
   }
@@ -54,6 +54,7 @@ class Connection {
   def boolean isClosed() {
     !isOpen()
   }
+
   def boolean getIsClosed() {
     isClosed()
   }
@@ -86,7 +87,7 @@ class Connection {
   }
 
   def RecoveryListener addRecoveryListener(Closure fn) {
-    if(this.cf.automaticRecoveryEnabled) {
+    if (this.cf.automaticRecoveryEnabled) {
       final listener = new ClosureDelegateRecoveryListener(fn)
       (this.delegate as AutorecoveringConnection).addRecoveryListener(listener)
 
@@ -97,8 +98,8 @@ class Connection {
   }
 
   def void removeRecoveryListener(RecoveryListener listener) {
-    if(cf.automaticRecoveryEnabled) {
-      ((AutorecoveringConnection)this.delegate).removeRecoveryListener(listener)
+    if (cf.automaticRecoveryEnabled) {
+      ((AutorecoveringConnection) this.delegate).removeRecoveryListener(listener)
     }
   }
 
