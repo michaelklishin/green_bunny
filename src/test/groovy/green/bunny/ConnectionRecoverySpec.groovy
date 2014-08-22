@@ -1,5 +1,7 @@
 package green.bunny
 
+import com.rabbitmq.client.AMQP
+
 import java.util.concurrent.CountDownLatch
 
 class ConnectionRecoverySpec extends IntegrationSpec {
@@ -94,12 +96,40 @@ class ConnectionRecoverySpec extends IntegrationSpec {
     assert ch1.isOpen
     assert ch2.isOpen
 
-    when: "connection is force-closed and recoveres"
+    when: "connection is force-closed and recovers"
     closeAndWaitForRecovery(conn)
 
     then: "both channels are recovered"
     ch1.isOpen
     ch2.isOpen
+
+    cleanup:
+    conn.close()
+  }
+
+  def "return listener recovery"() {
+    given: "an open channel with a basic.return listener"
+    final conn  = connect(true, true)
+    final ch    = conn.createChannel()
+    final latch = new CountDownLatch(1)
+    final x     = ch.defaultExchange
+    ch.addReturnListener { int replyCode,
+                           String replyText,
+                           String exchangeName,
+                           String routingKey,
+                           AMQP.BasicProperties props,
+                           byte[] body ->
+      latch.countDown()
+    }
+
+    when: "connection is force-closed and recovers"
+    closeAndWaitForRecovery(conn)
+
+    and: "an unroutable message is published"
+    x.publish(UUID.randomUUID().toString(), mandatory: true)
+
+    then: "the listener is recovered"
+    assert awaitOn(latch)
 
     cleanup:
     conn.close()
