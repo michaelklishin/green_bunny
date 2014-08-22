@@ -22,7 +22,7 @@ class Connection {
     if(ch == null) {
       null
     } else {
-      new Channel(ch)
+      new Channel(this, ch)
     }
   }
 
@@ -31,7 +31,7 @@ class Connection {
     if(ch == null) {
       null
     } else {
-      new Channel(ch)
+      new Channel(this, ch)
     }
   }
 
@@ -55,6 +55,14 @@ class Connection {
   }
   def boolean getIsClosed() {
     isClosed()
+  }
+
+  def boolean isAutomaticRecoveryEnabled() {
+    cf.automaticRecoveryEnabled
+  }
+
+  def boolean isTopologyRecoveryEnabled() {
+    cf.topologyRecoveryEnabled
   }
 
   def int getRequestedHeartbeat() {

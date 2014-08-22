@@ -10,6 +10,9 @@ import com.rabbitmq.client.AMQP.Exchange.BindOk    as EBindOk
 
 import com.rabbitmq.client.Consumer
 import com.rabbitmq.client.GetResponse
+import com.rabbitmq.client.RecoveryListener
+import com.rabbitmq.client.ShutdownListener
+import com.rabbitmq.client.impl.recovery.AutorecoveringConnection
 import groovy.transform.TypeChecked
 
 @TypeChecked
@@ -24,9 +27,11 @@ class Channel {
 
   protected com.rabbitmq.client.Channel delegate
   protected Exchange defaultExchange
+  protected Connection connection
 
-  Channel(com.rabbitmq.client.Channel delegate) {
-    this.delegate = delegate
+  Channel(Connection conn, com.rabbitmq.client.Channel delegate) {
+    this.connection = conn
+    this.delegate   = delegate
 
     this.defaultExchange = exchange("", "direct", durable: true, autoDelete: false)
   }
@@ -149,6 +154,28 @@ class Channel {
 
   def boolean waitForConfirms(long timeout) {
     delegate.waitForConfirms(timeout)
+  }
+
+  def ShutdownListener addShutdownListener(Closure fn) {
+    final listener = new ClosureDelegateShutdownListener(fn)
+    this.delegate.addShutdownListener(listener)
+
+    listener
+  }
+
+  def void removeShutdownListener(ShutdownListener listener) {
+    this.delegate.removeShutdownListener(listener)
+  }
+
+  def RecoveryListener addRecoveryListener(Closure fn) {
+    if(this.connection.automaticRecoveryEnabled) {
+      final listener = new ClosureDelegateRecoveryListener(fn)
+      (this.delegate as AutorecoveringConnection).addRecoveryListener(listener)
+
+      listener
+    } else {
+      null
+    }
   }
 
   //
