@@ -11,6 +11,7 @@ import com.rabbitmq.client.AMQP.Exchange.BindOk    as EBindOk
 import com.rabbitmq.client.Consumer
 import com.rabbitmq.client.GetResponse
 import com.rabbitmq.client.RecoveryListener
+import com.rabbitmq.client.ReturnListener
 import com.rabbitmq.client.ShutdownListener
 import com.rabbitmq.client.impl.recovery.AutorecoveringConnection
 import groovy.transform.TypeChecked
@@ -156,6 +157,16 @@ class Channel {
     delegate.waitForConfirms(timeout)
   }
 
+  def ReturnListener addReturnListener(Closure fn) {
+    final listener = new ClosureDelegateReturnListener(fn)
+    delegate.addReturnListener(listener)
+    listener
+  }
+
+  def void removeReturnListener(ReturnListener listener) {
+    this.delegate.removeReturnListener(listener)
+  }
+
   def ShutdownListener addShutdownListener(Closure fn) {
     final listener = new ClosureDelegateShutdownListener(fn)
     this.delegate.addShutdownListener(listener)
@@ -248,7 +259,11 @@ class Channel {
   }
 
   def void basicPublish(Map<String, Object> opts, String exchange, byte[] payload) {
-    delegate.basicPublish(exchange, routingKeyFrom(opts), basicPropertiesFrom(opts), payload)
+    delegate.basicPublish(exchange,
+        routingKeyFrom(opts),
+        opts.get("mandatory", false) as boolean,
+        basicPropertiesFrom(opts),
+        payload)
   }
 
   def QBindOk queueBind(String q, String x, String routingKey) {
