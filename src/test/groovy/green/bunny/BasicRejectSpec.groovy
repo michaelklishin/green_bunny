@@ -39,7 +39,6 @@ class BasicRejectSpec extends IntegrationSpec {
 
     and:
     "$n messages to deliver"
-    def l = new CountDownLatch(n)
 
     when: "client basic.gets $n messages"
     n.times { q.publish("hello") }
