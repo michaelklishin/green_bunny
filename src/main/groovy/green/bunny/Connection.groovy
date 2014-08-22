@@ -1,5 +1,6 @@
 package green.bunny
 
+import com.rabbitmq.client.BlockedListener
 import com.rabbitmq.client.ConnectionFactory
 import com.rabbitmq.client.RecoveryListener
 import com.rabbitmq.client.ShutdownListener
@@ -93,5 +94,38 @@ class Connection {
     } else {
       null
     }
+  }
+
+  def void removeRecoveryListener(RecoveryListener listener) {
+    if(cf.automaticRecoveryEnabled) {
+      ((AutorecoveringConnection)this.delegate).removeRecoveryListener(listener)
+    }
+  }
+
+  def BlockedListener addBlockedListener(BlockedListener listener) {
+    this.delegate.addBlockedListener(listener)
+    listener
+  }
+
+  def void removeBlockedListener(BlockedListener listener) {
+    this.delegate.removeBlockedListener(listener)
+  }
+
+  def BlockedListener addBlockedListener(Closure onBlocked, Closure onUnblocked) {
+    final listener = new ClosureDelegateBlockedListener(onBlocked, onUnblocked)
+    this.delegate.addBlockedListener(listener)
+    listener
+  }
+
+  def BlockedListener addBlockedListener(Closure fn) {
+    final listener = new ClosureDelegateBlockedListener(fn, Fn.noOpFn())
+    this.delegate.addBlockedListener(listener)
+    listener
+  }
+
+  def BlockedListener addUnblockedListener(Closure fn) {
+    final listener = new ClosureDelegateBlockedListener(Fn.noOpFn(), fn)
+    this.delegate.addBlockedListener(listener)
+    listener
   }
 }
