@@ -85,6 +85,26 @@ class ConnectionRecoverySpec extends IntegrationSpec {
     conn.close()
   }
 
+  def "channel recovery"() {
+    given: "an open connection with two channels"
+    final conn = connect(true, true)
+    final ch1  = conn.createChannel()
+    final ch2  = conn.createChannel()
+
+    assert ch1.isOpen
+    assert ch2.isOpen
+
+    when: "connection is force-closed and recoveres"
+    closeAndWaitForRecovery(conn)
+
+    then: "both channels are recovered"
+    ch1.isOpen
+    ch2.isOpen
+
+    cleanup:
+    conn.close()
+  }
+
   protected void closeAndWaitForRecovery(Connection conn) {
     final latch1 = prepareShutdownLatch(conn)
     final latch2 = prepareRecoveryLatch(conn)
