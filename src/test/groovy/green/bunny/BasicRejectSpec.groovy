@@ -52,6 +52,7 @@ class BasicRejectSpec extends IntegrationSpec {
     xs.each { long it -> ch.basicReject(it, true) }
 
     then: "there are $n messages ready in the queue"
+    Thread.sleep(100)
     q.messageCount() == n
 
     cleanup:
