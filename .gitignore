@@ -1,6 +1,7 @@
 .gradle
 build/
 gradle-app.setting
+pom.xml
 
 /target
 *.jar
@@ -9,4 +10,3 @@ gradle-app.setting
 *~
 *#
 ~*
-pom.xml
