@@ -7,7 +7,7 @@ import com.rabbitmq.client.AMQP.Exchange.DeclareOk as EDeclareOk
 import com.rabbitmq.client.AMQP.Exchange.DeleteOk  as EDeleteOk
 import com.rabbitmq.client.AMQP.Queue.BindOk       as QBindOk
 import com.rabbitmq.client.AMQP.Exchange.BindOk    as EBindOk
-
+import com.rabbitmq.client.ConfirmListener
 import com.rabbitmq.client.Consumer
 import com.rabbitmq.client.GetResponse
 import com.rabbitmq.client.RecoveryListener
@@ -165,6 +165,27 @@ class Channel {
 
   def void removeReturnListener(ReturnListener listener) {
     this.delegate.removeReturnListener(listener)
+  }
+
+  def ConfirmListener addConfirmListener(Closure fn) {
+    final listener = new ClosureDelegateConfirmListener(fn, Fn.noOpFn())
+    delegate.addConfirmListener(listener)
+    listener
+  }
+
+  def ConfirmListener addConfirmListener(Closure onAck, Closure onNack) {
+    final listener = new ClosureDelegateConfirmListener(onAck, onNack)
+    delegate.addConfirmListener(listener)
+    listener
+  }
+
+  def ConfirmListener addConfirmListener(ConfirmListener listener) {
+    delegate.addConfirmListener(listener)
+    listener
+  }
+
+  def void removeConfirmListener(ConfirmListener listener) {
+    delegate.removeConfirmListener(listener)
   }
 
   def ShutdownListener addShutdownListener(Closure fn) {
