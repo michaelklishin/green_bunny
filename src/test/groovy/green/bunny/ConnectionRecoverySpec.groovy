@@ -196,6 +196,29 @@ class ConnectionRecoverySpec extends IntegrationSpec {
     conn.close()
   }
 
+  def "client-named queue recovery with many queues"(int n) {
+    given: "an open connection and n client-named queues declared on it"
+    final conn = connect(true, true)
+    final ch   = conn.createChannel()
+    List<Queue> qs = []
+    1024.times {
+      qs << ch.queue("green.bunny.queues.$it", durable: false, exclusive: false, autoDelete: false)
+    }
+
+    when: "connection is force-closed and recovers"
+    closeAndWaitForRecovery(conn)
+
+    then: "the queues are re-declared"
+    qs.each { ensureQueueRecovered(ch, it) }
+
+    cleanup:
+    qs.each { it.delete() }
+    conn.close()
+
+    where:
+    n << [25, 250, 1000]
+  }
+
   def "server-named queue recovery"() {
     given: "an open connection and a server-named queue declared on it"
     final conn = connect(true, true)
