@@ -12,7 +12,7 @@ class AlternateExchangeSpec extends IntegrationSpec {
 
     when: "client publishes a message to the exchange"
     x.publish("hello")
-    ch.wait(250)
+    ch.waitForConfirms(250)
 
     then: "the message is routed to the queue via AE"
     q.messageCount() == 1
