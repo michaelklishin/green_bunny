@@ -161,6 +161,23 @@ class ConnectionRecoverySpec extends IntegrationSpec {
     conn.close()
   }
 
+  def "exchange recovery"() {
+    given: "an open connection and an exchange declared on it"
+    final conn = connect(true, true)
+    final ch   = conn.createChannel()
+    final x    = ch.fanout("green.bunny.fanouts.1")
+
+    when: "connection is force-closed and recovers"
+    closeAndWaitForRecovery(conn)
+
+    then: "the exchange is re-declared"
+    ensureExchangeRecovered(ch, x)
+
+    cleanup:
+    x.delete()
+    conn.close()
+  }
+
   protected void closeAndWaitForRecovery(Connection conn) {
     final latch1 = prepareShutdownLatch(conn)
     final latch2 = prepareRecoveryLatch(conn)
@@ -182,5 +199,18 @@ class ConnectionRecoverySpec extends IntegrationSpec {
     conn.addShutdownListener { latch.countDown() }
 
     latch
+  }
+
+  protected boolean ensureExchangeRecovered(Channel ch, Exchange x) {
+    ch.confirmSelect()
+    final q  = ch.queue()
+    final rk = "routing-key"
+    q.bind(x, routingKey: rk)
+    x.publish("msg", routingKey: rk, mandatory: true)
+    assert ch.waitForConfirms(500)
+
+    ch.exchangeDeclarePassive(x.name)
+    q.delete()
+    true
   }
 }
