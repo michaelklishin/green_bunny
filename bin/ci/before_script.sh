@@ -28,4 +28,4 @@ $RABBITMQCTL add_user green_bunny_reader reader_password
 $RABBITMQCTL set_permissions -p bunny_testbed green_bunny_reader "^---$" "^---$" ".*"
 
 # requires RabbitMQ 3.0+
-# $RABBITMQ_PLUGINS enable rabbitmq_consistent_hash_exchange
+$RABBITMQ_PLUGINS enable rabbitmq_consistent_hash_exchange
