@@ -1,5 +1,6 @@
 language: groovy
 before_script: ./bin/ci/before_script.sh
+script: ./gradlew check --info
 notifications:
   email: michael@rabbitmq.com
 services:
