@@ -178,6 +178,46 @@ class ConnectionRecoverySpec extends IntegrationSpec {
     conn.close()
   }
 
+  def "client-named queue recovery"() {
+    given: "an open connection and a client-named queue declared on it"
+    final conn = connect(true, true)
+    final ch   = conn.createChannel()
+    final q    = ch.queue("green.bunny.queues.1", durable: false, exclusive: false, autoDelete: false)
+
+    when: "connection is force-closed and recovers"
+    closeAndWaitForRecovery(conn)
+
+    then: "the queue is re-declared"
+    ensureQueueRecovered(ch, q)
+
+    cleanup:
+    q.delete()
+    conn.close()
+  }
+
+  def "server-named queue recovery"() {
+    given: "an open connection and a server-named queue declared on it"
+    final conn = connect(true, true)
+    final ch   = conn.createChannel()
+    final q    = ch.queue("", durable: false, exclusive: false, autoDelete: false)
+    final originalName = q.name
+    ensureServerNamed(q)
+
+    when: "connection is force-closed and recovers"
+    closeAndWaitForRecovery(conn)
+
+    then: "the queue is re-declared"
+    ensureQueueRecovered(ch, q)
+    ensureServerNamed(q)
+    // TODO: we need Java client API adjustments to update
+    //       queue name after recovery
+    // q.name != originalName
+
+    cleanup:
+    q.delete()
+    conn.close()
+  }
+
   protected void closeAndWaitForRecovery(Connection conn) {
     final latch1 = prepareShutdownLatch(conn)
     final latch2 = prepareRecoveryLatch(conn)
@@ -211,6 +251,18 @@ class ConnectionRecoverySpec extends IntegrationSpec {
 
     ch.exchangeDeclarePassive(x.name)
     q.delete()
+    true
+  }
+
+  protected boolean ensureQueueRecovered(Channel ch, Queue q) {
+    final n = q.messageCount()
+    ch.confirmSelect()
+    final x = ch.fanout("green.bunny.fanouts.0")
+    q.bind(x)
+    x.publish("msg")
+    ch.waitForConfirms(500)
+    assert q.messageCount() == (n + 1)
+    x.delete()
     true
   }
 }
