@@ -50,6 +50,10 @@ The most recent release is
 ```
 
 
+## Continuous Integration
+
+[![Build Status](https://travis-ci.org/michaelklishin/green_bunny.svg?branch=master)](https://travis-ci.org/michaelklishin/green_bunny)
+
 
 ## License
 
