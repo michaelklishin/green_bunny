@@ -19,6 +19,10 @@ dependencies {
   testCompile "com.novemberain.hop:hop:1.0.0-beta2"
 }
 
+task wrapper(type: Wrapper) {
+  gradleVersion = '2.0'
+}
+
 task pom << {
   pom {
     project {
