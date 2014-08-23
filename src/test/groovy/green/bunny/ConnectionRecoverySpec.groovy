@@ -135,6 +135,32 @@ class ConnectionRecoverySpec extends IntegrationSpec {
     conn.close()
   }
 
+  def "confirm listener recovery"() {
+    given: "an open channel with publisher confirms enabled and a recovery listener"
+    final latch = new CountDownLatch(1)
+    final conn  = connect(true, true)
+    final ch    = conn.createChannel().with {
+      it.confirmSelect()
+      it.addConfirmListener { long deliveryTag, boolean multile ->
+        latch.countDown()
+      }
+      it
+    }
+    final q     = ch.queue()
+
+    when: "connection is force-closed and recovers"
+    closeAndWaitForRecovery(conn)
+
+    and: "a routable message is published"
+    q.publish("payload")
+
+    then: "the listener is recovered"
+    assert awaitOn(latch)
+
+    cleanup:
+    conn.close()
+  }
+
   protected void closeAndWaitForRecovery(Connection conn) {
     final latch1 = prepareShutdownLatch(conn)
     final latch2 = prepareRecoveryLatch(conn)
