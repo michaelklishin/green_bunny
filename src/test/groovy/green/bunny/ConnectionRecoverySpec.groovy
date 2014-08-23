@@ -201,7 +201,8 @@ class ConnectionRecoverySpec extends IntegrationSpec {
     final conn = connect(true, true)
     final ch   = conn.createChannel()
     final q    = ch.queue("", durable: false, exclusive: false, autoDelete: false)
-    final originalName = q.name
+    // See below
+    // final originalName = q.name
     ensureServerNamed(q)
 
     when: "connection is force-closed and recovers"
