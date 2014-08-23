@@ -1,6 +1,7 @@
 package green.bunny
 
 import com.rabbitmq.client.AMQP
+import com.rabbitmq.client.Envelope
 
 import java.util.concurrent.CountDownLatch
 
@@ -218,6 +219,37 @@ class ConnectionRecoverySpec extends IntegrationSpec {
     conn.close()
   }
 
+  def "consumer recovery with many consumers"() {
+    given: "an open connection and a server-named queue declared on it"
+    final conn = connect(true, true)
+    final ch   = conn.createChannel()
+    final q    = ch.queue("green.bunny.queues.0", durable: false, exclusive: false, autoDelete: true)
+    final n    = 1024
+
+    List<SingleQueueConsumer> cs = []
+    n.times {
+      cs << q.subscribe { Channel channel, Envelope envelope,
+                          AMQP.BasicProperties properties, byte[] body ->
+        // no-op
+      }
+    }
+    assert q.consumerCount() == n
+
+    when: "connection is force-closed and recovers"
+    closeAndWaitForRecovery(conn)
+
+    then: "the consumers are re-added"
+    ensureQueueRecovered(ch, q)
+    q.consumerCount() == n
+
+    cleanup:
+    cs.each {
+      it.cancel()
+    }
+    q.delete()
+    conn.close()
+  }
+
   protected void closeAndWaitForRecovery(Connection conn) {
     final latch1 = prepareShutdownLatch(conn)
     final latch2 = prepareRecoveryLatch(conn)
@@ -261,7 +293,7 @@ class ConnectionRecoverySpec extends IntegrationSpec {
     q.bind(x)
     x.publish("msg")
     ch.waitForConfirms(500)
-    assert q.messageCount() == (n + 1)
+    assert q.messageCount() >= n
     x.delete()
     true
   }
