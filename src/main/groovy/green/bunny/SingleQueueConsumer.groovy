@@ -24,7 +24,7 @@ class SingleQueueConsumer extends DefaultConsumer {
     super(ch)
   }
 
-  def String getConsumerTag() {
+  String getConsumerTag() {
     this._consumerTag
   }
 

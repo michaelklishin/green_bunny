@@ -35,7 +35,7 @@ class DefaultConsumer implements Consumer {
   // API
   //
 
-  def Channel getChannel() {
+  Channel getChannel() {
     this._channel
   }
 

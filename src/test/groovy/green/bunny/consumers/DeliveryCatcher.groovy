@@ -19,7 +19,7 @@ class DeliveryCatcher extends SingleQueueConsumer {
     this.latch = latch
   }
 
-  def CountDownLatch getLatch() {
+  CountDownLatch getLatch() {
     this.latch
   }
 

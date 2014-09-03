@@ -8,7 +8,7 @@ class ClosureDelegateBlockedListener implements BlockedListener {
   final Closure onBlocked
   final Closure onUnblocked
 
-  def ClosureDelegateBlockedListener(Closure onBlocked, Closure onUnblocked) {
+  ClosureDelegateBlockedListener(Closure onBlocked, Closure onUnblocked) {
     this.onBlocked   = onBlocked
     this.onUnblocked = onUnblocked
   }

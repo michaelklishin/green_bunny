@@ -8,7 +8,7 @@ class ClosureDelegateConfirmListener implements ConfirmListener {
   final Closure<Void> onAck
   final Closure<Void> onNack
 
-  def ClosureDelegateConfirmListener(Closure<Void> onAck, Closure<Void> onNack) {
+  ClosureDelegateConfirmListener(Closure<Void> onAck, Closure<Void> onNack) {
     this.onAck  = onAck
     this.onNack = onNack
   }
