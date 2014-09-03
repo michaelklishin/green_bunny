@@ -21,11 +21,11 @@ class GreenBunny {
   static ConnectionFactory connectionFactoryFor(Map map) {
     def ConnectionFactory cf = new ConnectionFactory()
 
-    cf.host        = map.get("hostname") ?: (map.get("host") ?: ConnectionFactory.DEFAULT_HOST)
-    cf.port        = (map.get("port")    ?: ConnectionFactory.DEFAULT_AMQP_PORT) as int
-    cf.username    = map.get("username") ?: ConnectionFactory.DEFAULT_USER
-    cf.password    = map.get("password") ?: ConnectionFactory.DEFAULT_PASS
-    cf.virtualHost = map.get("vhost")    ?: ConnectionFactory.DEFAULT_VHOST
+    cf.host        = map.hostname ?: (map.host ?: ConnectionFactory.DEFAULT_HOST)
+    cf.port        = (map.port    ?: ConnectionFactory.DEFAULT_AMQP_PORT) as int
+    cf.username    = map.username ?: ConnectionFactory.DEFAULT_USER
+    cf.password    = map.password ?: ConnectionFactory.DEFAULT_PASS
+    cf.virtualHost = map.vhost    ?: ConnectionFactory.DEFAULT_VHOST
 
     cf = maybeEnableTLS(cf, map)
 
@@ -45,12 +45,12 @@ class GreenBunny {
     }
 
     def tls_protocol = map.get("tls_protocol") as String
-    if(tls_protocol != null) {
+    if(tls_protocol) {
       cf.useSslProtocol(tls_protocol)
     }
 
     def tls_context = map.get("tls_context") as SSLContext
-    if(tls_context != null) {
+    if(tls_context) {
       cf.useSslProtocol(tls_context)
     }
 

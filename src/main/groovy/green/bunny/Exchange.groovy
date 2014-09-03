@@ -41,31 +41,31 @@ class Exchange {
   // Properties
   //
 
-  def String getName() {
+  String getName() {
     this.name
   }
 
-  def boolean getIsPredefined() {
+  boolean getIsPredefined() {
     this.name.isEmpty() || this.name.startsWith("amq.")
   }
 
-  def String getType() {
+  String getType() {
     this.type
   }
 
-  def Channel getChannel() {
+  Channel getChannel() {
     this.channel
   }
 
-  def boolean getIsDurable() {
+  boolean getIsDurable() {
     this.durable
   }
 
-  def boolean getIsAutoDelete() {
+  boolean getIsAutoDelete() {
     this.autoDelete
   }
 
-  def Map<String, Object> getArguments() {
+  Map<String, Object> getArguments() {
     this.arguments
   }
 
@@ -73,19 +73,19 @@ class Exchange {
   // Publishing
   //
 
-  def void publish(String payload) {
+  void publish(String payload) {
     publish([:], payload)
   }
 
-  def void publish(byte[] payload) {
+  void publish(byte[] payload) {
     publish([:], payload)
   }
 
-  def void publish(Map<String, Object> opts, String payload) {
+  void publish(Map<String, Object> opts, String payload) {
     this.channel.basicPublish(opts, this.name, payload)
   }
 
-  def void publish(Map<String, Object> opts, byte[] payload) {
+  void publish(Map<String, Object> opts, byte[] payload) {
     this.channel.basicPublish(opts, this.name, payload)
   }
 
@@ -93,14 +93,14 @@ class Exchange {
   // Binding
   //
 
-  def Exchange bind(Exchange source) {
+  Exchange bind(Exchange source) {
     this.channel.exchangeBind(this.name, source.name, "")
     this
   }
 
-  def Exchange bind(Map<String, Object> opts, Exchange source) {
+  Exchange bind(Map<String, Object> opts, Exchange source) {
     this.channel.exchangeBind(this.name, source.name,
-        opts.get("routingKey") as String,
+        opts.get("routingKey").toString(),
         opts.get("arguments") as Map<String, Object>)
     this
   }
@@ -109,7 +109,7 @@ class Exchange {
   // Deletion
   //
 
-  def void delete() {
+  void delete() {
     this.channel.exchangeDelete(this.name)
   }
 
@@ -118,16 +118,11 @@ class Exchange {
   //
 
   @Override
-  def String toString() {
-    "<" +
-        "type = " + type +
-        ", name = " + name +
-        ", durable = " + isDurable.toString() +
-        ", autoDelete = " + isAutoDelete.toString() +
-    ">"
+  String toString() {
+    "<type = $type, name = $name, durable = $isDurable, autoDelete = $isAutoDelete>"
   }
 
-  def maybePerformDeclare() {
+  void maybePerformDeclare() {
     if(!isPredefined) {
       this.channel.exchangeDeclare(name, type, durable, autoDelete, arguments)
     }
@@ -136,7 +131,7 @@ class Exchange {
   static validateType(String s) {
     if(!(KNOWN_EXCHANGE_TYPES.contains(s) ||
         s.startsWith("x-"))) {
-      throw new IllegalArgumentException("Invalid exchange type: " + s.toString())
+      throw new IllegalArgumentException("Invalid exchange type: $s")
     }
   }
 }

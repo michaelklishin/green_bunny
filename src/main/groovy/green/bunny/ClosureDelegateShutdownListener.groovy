@@ -7,7 +7,8 @@ import groovy.transform.TypeChecked
 @TypeChecked
 class ClosureDelegateShutdownListener implements ShutdownListener {
   final Closure fn;
-  def ClosureDelegateShutdownListener(Closure fn) {
+
+  ClosureDelegateShutdownListener(Closure fn) {
     this.fn = fn;
   }
 

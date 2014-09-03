@@ -41,21 +41,21 @@ class Channel {
   // Open, close
   //
 
-  def boolean isOpen() {
+  boolean isOpen() {
     delegate.isOpen()
   }
-  def boolean getIsOpen() {
+  boolean getIsOpen() {
     isOpen()
   }
 
-  def close() {
+  void close() {
     delegate.close()
   }
 
-  def boolean isClosed() {
+  boolean isClosed() {
     !isOpen()
   }
-  def boolean getIsClosed() {
+  boolean getIsClosed() {
     isClosed()
   }
 
@@ -63,7 +63,7 @@ class Channel {
   // Channel #
   //
 
-  def int getNumber() {
+  int getNumber() {
     delegate.channelNumber
   }
 
@@ -71,18 +71,18 @@ class Channel {
   // High-level API
   //
 
-  def Queue queue() {
+  Queue queue() {
     def q = new Queue(this)
     q.performDeclare()
     // TODO: caching, book keeping for recovery
     q
   }
 
-  def Queue queue(String name) {
+  Queue queue(String name) {
     queue([:], name)
   }
 
-  def Queue queue(Map opts, String name) {
+  Queue queue(Map opts, String name) {
     def q = new Queue(this, name,
         (opts.get("durable")     ?: false) as boolean,
         (opts.get("exclusive")   ?: false) as boolean,
@@ -93,7 +93,7 @@ class Channel {
     q
   }
 
-  def Exchange exchange(Map opts, String name, String type) {
+  Exchange exchange(Map opts, String name, String type) {
     Exchange.validateType(type)
 
     def e = new Exchange(this, name, type,
@@ -105,31 +105,31 @@ class Channel {
     e
   }
 
-  def Exchange defaultExchange() {
+  Exchange defaultExchange() {
     this.defaultExchange
   }
 
-  def getDefaultExchange() {
+  Exchange getDefaultExchange() {
     this.defaultExchange
   }
 
-  def Exchange fanout(String name) {
+  Exchange fanout(String name) {
     fanout([:], name)
   }
 
-  def Exchange fanout(Map opts, String name) {
+  Exchange fanout(Map opts, String name) {
     exchange(opts, name, "fanout")
   }
 
-  def Exchange topic(String name) {
+  Exchange topic(String name) {
     topic([:], name)
   }
 
-  def Exchange topic(Map opts, String name) {
+  Exchange topic(Map opts, String name) {
     exchange(opts, name, "topic")
   }
 
-  def Exchange direct(String name) {
+  Exchange direct(String name) {
     if(name.isEmpty()) {
       defaultExchange
     } else {
@@ -137,69 +137,69 @@ class Channel {
     }
   }
 
-  def Exchange direct(Map opts, String name) {
+  Exchange direct(Map opts, String name) {
     exchange(opts, name, "direct")
   }
 
-  def Exchange headers(Map opts, String name) {
+  Exchange headers(Map opts, String name) {
     exchange(opts, name, "headers")
   }
 
-  def void confirmSelect() {
+  void confirmSelect() {
     delegate.confirmSelect()
   }
 
-  def boolean waitForConfirms() {
+  boolean waitForConfirms() {
     delegate.waitForConfirms()
   }
 
-  def boolean waitForConfirms(long timeout) {
+  boolean waitForConfirms(long timeout) {
     delegate.waitForConfirms(timeout)
   }
 
-  def ReturnListener addReturnListener(Closure fn) {
+  ReturnListener addReturnListener(Closure fn) {
     final listener = new ClosureDelegateReturnListener(fn)
     delegate.addReturnListener(listener)
     listener
   }
 
-  def void removeReturnListener(ReturnListener listener) {
+  void removeReturnListener(ReturnListener listener) {
     this.delegate.removeReturnListener(listener)
   }
 
-  def ConfirmListener addConfirmListener(Closure fn) {
+  ConfirmListener addConfirmListener(Closure fn) {
     final listener = new ClosureDelegateConfirmListener(fn, Fn.noOpFn())
     delegate.addConfirmListener(listener)
     listener
   }
 
-  def ConfirmListener addConfirmListener(Closure onAck, Closure onNack) {
+  ConfirmListener addConfirmListener(Closure onAck, Closure onNack) {
     final listener = new ClosureDelegateConfirmListener(onAck, onNack)
     delegate.addConfirmListener(listener)
     listener
   }
 
-  def ConfirmListener addConfirmListener(ConfirmListener listener) {
+  ConfirmListener addConfirmListener(ConfirmListener listener) {
     delegate.addConfirmListener(listener)
     listener
   }
 
-  def void removeConfirmListener(ConfirmListener listener) {
+  void removeConfirmListener(ConfirmListener listener) {
     delegate.removeConfirmListener(listener)
   }
 
-  def ShutdownListener addShutdownListener(Closure fn) {
+  ShutdownListener addShutdownListener(Closure fn) {
     final listener = new ClosureDelegateShutdownListener(fn)
     this.delegate.addShutdownListener(listener)
 
     listener
   }
 
-  def void removeShutdownListener(ShutdownListener listener) {
+  void removeShutdownListener(ShutdownListener listener) {
     this.delegate.removeShutdownListener(listener)
   }
 
-  def RecoveryListener addRecoveryListener(Closure fn) {
+  RecoveryListener addRecoveryListener(Closure fn) {
     if(this.connection.automaticRecoveryEnabled) {
       final listener = new ClosureDelegateRecoveryListener(fn)
       (this.delegate as AutorecoveringConnection).addRecoveryListener(listener)
@@ -214,72 +214,72 @@ class Channel {
   // Lower-level API
   //
 
-  def String queueDeclare() {
+  String queueDeclare() {
     delegate.queueDeclare().queue
   }
 
-  def QDeclareOk queueDeclare(String name, boolean durable, boolean exclusive,
+  QDeclareOk queueDeclare(String name, boolean durable, boolean exclusive,
                              boolean autoDelete, Map<String, Object> arguments) {
     delegate.queueDeclare(name, durable, exclusive, autoDelete, arguments)
   }
 
-  def QDeclareOk queueDeclarePassive(String name) {
+  QDeclareOk queueDeclarePassive(String name) {
     delegate.queueDeclarePassive(name)
   }
 
-  def QDeleteOk queueDelete(String name) {
+  QDeleteOk queueDelete(String name) {
     delegate.queueDelete(name)
   }
 
-  def EDeclareOk exchangeDeclare(String name, String type, boolean durable,
+  EDeclareOk exchangeDeclare(String name, String type, boolean durable,
                                  boolean autoDelete, Map<String, Object> arguments) {
     delegate.exchangeDeclare(name, type, durable, autoDelete, arguments)
   }
 
-  def EDeleteOk exchangeDelete(String name) {
+  EDeleteOk exchangeDelete(String name) {
     delegate.exchangeDelete(name)
   }
 
-  def EDeclareOk exchangeDeclarePassive(String name) {
+  EDeclareOk exchangeDeclarePassive(String name) {
     delegate.exchangeDeclarePassive(name)
   }
 
-  def String basicConsume(String q, boolean autoAck, String consumerTag,
+  String basicConsume(String q, boolean autoAck, String consumerTag,
                           boolean exclusive, Map<String, Object> arguments,
                           Consumer consumer) {
     delegate.basicConsume(q, autoAck, consumerTag, false,
         exclusive, arguments, consumer)
   }
 
-  def void basicCancel(String consumerTag) {
+  void basicCancel(String consumerTag) {
     delegate.basicCancel(consumerTag)
   }
 
-  def GetResponse basicGet(String q) {
+  GetResponse basicGet(String q) {
     delegate.basicGet(q, true)
   }
 
-  def GetResponse basicGet(String q, boolean autoAck) {
+  GetResponse basicGet(String q, boolean autoAck) {
     delegate.basicGet(q, autoAck)
   }
 
-  def void basicAck(long deliveryTag) {
+  void basicAck(long deliveryTag) {
     basicAck(deliveryTag, false)
   }
 
-  def void basicAck(long deliveryTag, boolean multiple) {
+  void basicAck(long deliveryTag, boolean multiple) {
     delegate.basicAck(deliveryTag, multiple)
   }
 
-  def void basicReject(long deliveryTag, boolean requeue) {
+  void basicReject(long deliveryTag, boolean requeue) {
     delegate.basicReject(deliveryTag, requeue)
   }
 
-  def void basicPublish(Map<String, Object> opts, String exchange, String payload) {
+  void basicPublish(Map<String, Object> opts, String exchange, String payload) {
     basicPublish(opts, exchange, payload.getBytes(DEFAULT_CHARSET))
   }
 
-  def void basicPublish(Map<String, Object> opts, String exchange, byte[] payload) {
+  void basicPublish(Map<String, Object> opts, String exchange, byte[] payload) {
     delegate.basicPublish(exchange,
         routingKeyFrom(opts),
         opts.get("mandatory", false) as boolean,
@@ -287,24 +287,24 @@ class Channel {
         payload)
   }
 
-  def QBindOk queueBind(String q, String x, String routingKey) {
+  QBindOk queueBind(String q, String x, String routingKey) {
     delegate.queueBind(q, x, routingKey)
   }
 
-  def QBindOk queueBind(String q, String x, String routingKey, Map<String, Object> arguments) {
+  QBindOk queueBind(String q, String x, String routingKey, Map<String, Object> arguments) {
     delegate.queueBind(q, x, routingKey, arguments)
   }
 
-  def EBindOk exchangeBind(String destination, String source, String routingKey) {
+  EBindOk exchangeBind(String destination, String source, String routingKey) {
     delegate.exchangeBind(destination, source, routingKey)
   }
 
-  def EBindOk exchangeBind(String destination, String source, String routingKey,
+  EBindOk exchangeBind(String destination, String source, String routingKey,
                            Map<String, Object> arguments) {
     delegate.exchangeBind(destination, source, routingKey, arguments)
   }
 
-  def AMQP.Queue.PurgeOk queuePurge(String q) {
+  AMQP.Queue.PurgeOk queuePurge(String q) {
     delegate.queuePurge(q)
   }
 

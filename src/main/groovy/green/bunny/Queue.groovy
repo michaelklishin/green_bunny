@@ -47,62 +47,56 @@ class Queue {
   // Properties
   //
 
-  def String getName() {
+  String getName() {
     this.name
   }
 
-  def boolean getIsServerNamed() {
+  boolean getIsServerNamed() {
     this.serverNamed
   }
 
-  def Channel getChannel() {
+  Channel getChannel() {
     this.channel
   }
 
-  def boolean getIsDurable() {
+  boolean getIsDurable() {
     this.durable
   }
 
-  def boolean getIsExclusive() {
+  boolean getIsExclusive() {
     this.exclusive
   }
 
-  def boolean getIsAutoDelete() {
+  boolean getIsAutoDelete() {
     this.autoDelete
   }
 
-  def Map<String, Object> getArguments() {
+  Map<String, Object> getArguments() {
     this.arguments
   }
 
-  def long messageCount() {
+  long messageCount() {
     channel.queueDeclarePassive(this.name).messageCount
   }
 
-  def long consumerCount() {
+  long consumerCount() {
     channel.queueDeclarePassive(this.name).consumerCount
   }
 
   @Override
-  def String toString() {
-    "<" +
-        "name = " + name +
-        ", durable = " + isDurable.toString() +
-        ", exclusive = " + isExclusive.toString() +
-        ", autoDelete = " + isAutoDelete.toString() +
-        ", arguments = " + arguments.toString() +
-    ">"
+  String toString() {
+    "<name = $name, durable = $isDurable, exclusive = $isExclusive, autoDelete = $isAutoDelete, arguments = $arguments>"
   }
 
   //
   // Consumers
   //
 
-  def String subscribeWith(Consumer consumer) {
+  String subscribeWith(Consumer consumer) {
     subscribeWith([:], consumer)
   }
 
-  def String subscribeWith(Map<String, Object> opts, Consumer consumer) {
+  String subscribeWith(Map<String, Object> opts, Consumer consumer) {
     // TODO: add consumer to the map of consumers
     this.channel.basicConsume(this.name,
         opts.get("autoAck", true) as boolean,
@@ -112,19 +106,19 @@ class Queue {
         consumer)
   }
 
-  def ClosureDelegateConsumer subscribe(Closure deliveryHandler) {
+  ClosureDelegateConsumer subscribe(Closure deliveryHandler) {
     def cons = new ClosureDelegateConsumer(this.channel, deliveryHandler)
     subscribeWith(cons)
     cons
   }
 
-  def ClosureDelegateConsumer subscribe(Map<String, Object> opts, Closure deliveryHandler) {
+  ClosureDelegateConsumer subscribe(Map<String, Object> opts, Closure deliveryHandler) {
     def cons = new ClosureDelegateConsumer(this.channel, deliveryHandler)
     subscribeWith(opts, cons)
     cons
   }
 
-  def ClosureDelegateConsumer subscribe(Map<String, Object> opts, Closure deliveryHandler, Closure cancelHandler) {
+  ClosureDelegateConsumer subscribe(Map<String, Object> opts, Closure deliveryHandler, Closure cancelHandler) {
     def cons = new ClosureDelegateConsumer(this.channel, deliveryHandler, cancelHandler)
     subscribeWith(opts, cons)
     cons
@@ -134,10 +128,10 @@ class Queue {
   // basic.get ("pull API")
   //
 
-  def GetResponse get() {
+  GetResponse get() {
     get(true)
   }
-  def GetResponse get(boolean autoAck) {
+  GetResponse get(boolean autoAck) {
     this.channel.basicGet(this.name, autoAck)
   }
 
@@ -145,12 +139,12 @@ class Queue {
   // Bindings
   //
 
-  def Queue bind(Exchange x) {
+  Queue bind(Exchange x) {
     this.channel.queueBind(this.name, x.name, "")
     this
   }
 
-  def Queue bind(Map<String, Object> opts, Exchange x) {
+  Queue bind(Map<String, Object> opts, Exchange x) {
     this.channel.queueBind(this.name, x.name,
         opts.get("routingKey") as String,
         opts.get("arguments") as Map<String, Object>)
@@ -161,12 +155,12 @@ class Queue {
   // Purging
   //
 
-  def Queue purge() {
+  Queue purge() {
     this.channel.queuePurge(this.name)
     this
   }
 
-  def boolean getIsEmpty() {
+  boolean getIsEmpty() {
     messageCount() == 0
   }
 
@@ -174,7 +168,7 @@ class Queue {
   // Deletion
   //
 
-  def void delete() {
+  void delete() {
     this.channel.queueDelete(this.name)
   }
 
@@ -182,11 +176,11 @@ class Queue {
   // Publishing (uses default exchange)
   //
 
-  def void publish(String payload) {
+  void publish(String payload) {
     publish(payload.getBytes("UTF-8"))
   }
 
-  def void publish(byte[] payload) {
+  void publish(byte[] payload) {
     this.channel.basicPublish(["routingKey": this.name] as Map<String, Object>, "", payload)
   }
 
@@ -194,7 +188,7 @@ class Queue {
   // Implementation
   //
 
-  def String performDeclare() {
+  String performDeclare() {
     this.name = this.channel.queueDeclare(name, durable, exclusive, autoDelete, arguments).queue
     this.name
   }

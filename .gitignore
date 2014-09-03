@@ -3,6 +3,9 @@ build/
 gradle-app.setting
 pom.xml
 
+.idea
+*.iml
+
 /target
 *.jar
 *.log
